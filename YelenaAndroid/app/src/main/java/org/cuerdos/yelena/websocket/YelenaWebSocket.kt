@@ -10,7 +10,7 @@ import android.provider.MediaStore
 import android.util.Base64
 import android.util.Log
 import io.ktor.client.*
-import io.ktor.client.engine.okhttp.*
+import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.*
@@ -33,7 +33,7 @@ object YelenaWebSocket {
     private const val TAG = "YelenaWS"
 
     private val json   = Json { ignoreUnknownKeys = true }
-    private val client = HttpClient(OkHttp) { install(WebSockets) }
+    private val client = HttpClient(CIO) { install(WebSockets) }
 
     val connectionState    = MutableStateFlow<ConnectionState>(ConnectionState.Disconnected)
     val pcResources        = MutableStateFlow(PcResources())
