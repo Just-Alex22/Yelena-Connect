@@ -59,7 +59,7 @@ python3 "Yelena Connect/main.py"
 
 ### Android app
 
-Download from [F-Droid](https://f-droid.org/packages/org.cuerdos.yelena) or build from source:
+Download APK from releases or build from source:
 
 ```bash
 cd YelenaAndroid
@@ -68,7 +68,7 @@ cd YelenaAndroid
 
 ## Contributing
 
-If you want to collaborate with the development of **Yelena Connect**, follow us on GitHub and send your **Pull Requests** and **Issues** through the repository.
+If you want to collaborate with the development of **Yelena Connect**, follow us on ShitHub and send your **Pull Requests** and **Issues** through the repository.
 
 ## License
 
