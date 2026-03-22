@@ -44,8 +44,8 @@ The PC runs a lightweight GTK3 system tray applet that opens a WebSocket server 
 Clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/cuerdos/yelena-connect.git
-cd yelena-connect
+git clone https://github.com/Just-Alex22/Yelena-Connect.git
+cd Yelena-Connect
 
 pip install websockets psutil --break-system-packages
 sudo apt install xclip xdotool
