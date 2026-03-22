@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/welcomeFragment">
+
+    <fragment android:id="@+id/welcomeFragment"
+        android:name="org.cuerdos.yelena.ui.welcome.WelcomeFragment">
+        <action android:id="@+id/action_welcome_to_connect"
+            app:destination="@id/connectFragment"
+            app:enterAnim="@anim/fade_in" app:exitAnim="@anim/fade_out"/>
+    </fragment>
+
+    <fragment android:id="@+id/connectFragment"
+        android:name="org.cuerdos.yelena.ui.connect.ConnectFragment">
+        <action android:id="@+id/action_connect_to_main"
+            app:destination="@id/mainFragment"
+            app:enterAnim="@anim/slide_in_right" app:exitAnim="@anim/slide_out_left"
+            app:popUpTo="@id/welcomeFragment" app:popUpToInclusive="true"/>
+        <action android:id="@+id/action_connect_to_qrScanner"
+            app:destination="@id/qrScannerFragment"
+            app:enterAnim="@anim/slide_in_right" app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left" app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+
+    <fragment android:id="@+id/qrScannerFragment"
+        android:name="org.cuerdos.yelena.ui.qr.QrScannerFragment">
+        <action android:id="@+id/action_qrScanner_to_main"
+            app:destination="@id/mainFragment"
+            app:enterAnim="@anim/slide_in_right" app:exitAnim="@anim/slide_out_left"
+            app:popUpTo="@id/welcomeFragment" app:popUpToInclusive="true"/>
+    </fragment>
+
+    <fragment android:id="@+id/mainFragment"
+        android:name="org.cuerdos.yelena.ui.main.MainFragment">
+        <action android:id="@+id/action_main_to_trackpad"
+            app:destination="@id/trackpadFragment"
+            app:enterAnim="@anim/slide_in_right" app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left" app:popExitAnim="@anim/slide_out_right"/>
+        <action android:id="@+id/action_main_to_terminal"
+            app:destination="@id/terminalFragment"
+            app:enterAnim="@anim/slide_in_right" app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left" app:popExitAnim="@anim/slide_out_right"/>
+        <action android:id="@+id/action_main_to_notifications"
+            app:destination="@id/notificationsFragment"
+            app:enterAnim="@anim/slide_in_right" app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left" app:popExitAnim="@anim/slide_out_right"/>
+        <action android:id="@+id/action_main_to_processes"
+            app:destination="@id/processesFragment"
+            app:enterAnim="@anim/slide_in_right" app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left" app:popExitAnim="@anim/slide_out_right"/>
+        <action android:id="@+id/action_main_to_apps"
+            app:destination="@id/appsFragment"
+            app:enterAnim="@anim/slide_in_right" app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left" app:popExitAnim="@anim/slide_out_right"/>
+        <action android:id="@+id/action_main_to_clipboard"
+            app:destination="@id/clipboardHistoryFragment"
+            app:enterAnim="@anim/slide_in_right" app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left" app:popExitAnim="@anim/slide_out_right"/>
+        <action android:id="@+id/action_main_to_settings"
+            app:destination="@id/settingsFragment"
+            app:enterAnim="@anim/slide_in_right" app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left" app:popExitAnim="@anim/slide_out_right"/>
+        <action android:id="@+id/action_main_to_about"
+            app:destination="@id/aboutFragment"
+            app:enterAnim="@anim/slide_in_right" app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left" app:popExitAnim="@anim/slide_out_right"/>
+        <action android:id="@+id/action_main_to_connect"
+            app:destination="@id/connectFragment"
+            app:enterAnim="@anim/fade_in" app:exitAnim="@anim/fade_out"
+            app:popUpTo="@id/welcomeFragment" app:popUpToInclusive="false"/>
+    </fragment>
+
+    <fragment android:id="@+id/trackpadFragment"
+        android:name="org.cuerdos.yelena.ui.trackpad.TrackpadFragment"/>
+    <fragment android:id="@+id/terminalFragment"
+        android:name="org.cuerdos.yelena.ui.terminal.TerminalFragment"/>
+    <fragment android:id="@+id/notificationsFragment"
+        android:name="org.cuerdos.yelena.ui.notifications.NotificationsFragment"/>
+    <fragment android:id="@+id/processesFragment"
+        android:name="org.cuerdos.yelena.ui.processes.ProcessesFragment"/>
+    <fragment android:id="@+id/appsFragment"
+        android:name="org.cuerdos.yelena.ui.apps.AppsFragment"/>
+    <fragment android:id="@+id/clipboardHistoryFragment"
+        android:name="org.cuerdos.yelena.ui.clipboard.ClipboardHistoryFragment"/>
+    <fragment android:id="@+id/settingsFragment"
+        android:name="org.cuerdos.yelena.ui.main.SettingsFragment"/>
+    <fragment android:id="@+id/aboutFragment"
+        android:name="org.cuerdos.yelena.ui.about.AboutFragment"/>
+
+</navigation>

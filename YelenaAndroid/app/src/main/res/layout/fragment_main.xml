@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- DrawerLayout ES LA RAÍZ — único diseño correcto para drawer funcional -->
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- ── Contenido principal ── -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/bg_view">
+
+        <!-- Header sin barra de sistema extra -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="48dp"
+            android:paddingBottom="12dp"
+            android:background="@color/bg_view">
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@mipmap/ic_launcher_round"
+                android:contentDescription="Logo"
+                android:layout_marginEnd="10dp"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name"
+                    android:textColor="@color/text_primary"
+                    android:textSize="15sp"
+                    android:textStyle="bold"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <View
+                        android:id="@+id/connectionDot"
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:background="@drawable/shape_dot"
+                        android:layout_marginEnd="6dp"/>
+
+                    <TextView
+                        android:id="@+id/tvConnectionStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/disconnected"
+                        android:textColor="@color/text_disabled"
+                        android:textSize="12sp"/>
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Botón hamburguesa -->
+            <ImageButton
+                android:id="@+id/btnMenu"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:src="@drawable/ic_menu"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:tint="@color/text_primary"
+                android:contentDescription="Menú"
+                android:padding="8dp"/>
+
+        </LinearLayout>
+
+        <!-- Scroll del contenido -->
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:paddingBottom="32dp">
+
+                <!-- Multimedia -->
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/Widget.Yelena.Card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+                        <TextView
+                            android:id="@+id/tvMediaTitle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textColor="@color/text_primary"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:ellipsize="end"
+                            android:singleLine="true"
+                            android:visibility="gone"
+                            android:layout_marginBottom="4dp"/>
+                        <TextView
+                            android:id="@+id/tvMediaArtist"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textColor="@color/text_secondary"
+                            android:textSize="14sp"
+                            android:ellipsize="end"
+                            android:singleLine="true"
+                            android:visibility="gone"
+                            android:layout_marginBottom="8dp"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center">
+                            <ImageButton android:id="@+id/btnVolDown"
+                                android:layout_width="44dp" android:layout_height="44dp"
+                                android:src="@drawable/ic_vol_down"
+                                android:background="?attr/selectableItemBackgroundBorderless"
+                                android:tint="@color/text_secondary"
+                                android:contentDescription="Bajar volumen"/>
+                            <ImageButton android:id="@+id/btnPrev"
+                                android:layout_width="44dp" android:layout_height="44dp"
+                                android:src="@drawable/ic_skip_prev"
+                                android:background="?attr/selectableItemBackgroundBorderless"
+                                android:tint="@color/text_primary"
+                                android:layout_marginHorizontal="4dp"
+                                android:contentDescription="Anterior"/>
+                            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                                android:id="@+id/btnPlayPause"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_play"
+                                app:backgroundTint="@color/accent_green"
+                                app:tint="@color/white"
+                                app:fabSize="normal"
+                                android:layout_marginHorizontal="8dp"
+                                android:contentDescription="Play/Pausa"/>
+                            <ImageButton android:id="@+id/btnNext"
+                                android:layout_width="44dp" android:layout_height="44dp"
+                                android:src="@drawable/ic_skip_next"
+                                android:background="?attr/selectableItemBackgroundBorderless"
+                                android:tint="@color/text_primary"
+                                android:layout_marginHorizontal="4dp"
+                                android:contentDescription="Siguiente"/>
+                            <ImageButton android:id="@+id/btnVolUp"
+                                android:layout_width="44dp" android:layout_height="44dp"
+                                android:src="@drawable/ic_vol_up"
+                                android:background="?attr/selectableItemBackgroundBorderless"
+                                android:tint="@color/text_secondary"
+                                android:contentDescription="Subir volumen"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Recursos del PC -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/resources_title"
+                    android:textAppearance="@style/TextAppearance.Yelena.Caption"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginStart="4dp"/>
+
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/Widget.Yelena.Card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="16dp">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/uptime_label"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="13sp"/>
+                            <TextView
+                                android:id="@+id/tvUptime"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="--"
+                                android:textColor="@color/accent_green"
+                                android:textSize="13sp"
+                                android:textStyle="bold"/>
+                        </LinearLayout>
+                        <include android:id="@+id/rowCpu"  layout="@layout/item_resource_row"/>
+                        <include android:id="@+id/rowRam"  layout="@layout/item_resource_row" android:layout_marginTop="16dp"/>
+                        <include android:id="@+id/rowDisk" layout="@layout/item_resource_row" android:layout_marginTop="16dp"/>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+                <!-- Accesos rápidos -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="32dp">
+
+                    <!-- Terminal -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardTerminal"
+                        style="@style/Widget.Yelena.Card"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="6dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:padding="16dp">
+                            <ImageView
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:src="@drawable/ic_terminal"
+                                android:tint="@color/accent_blue"
+                                android:contentDescription="Terminal"
+                                android:layout_marginBottom="8dp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/terminal_label"
+                                android:textColor="@color/text_primary"
+                                android:textSize="13sp"
+                                android:textStyle="bold"/>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Teclado virtual -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardTrackpad"
+                        style="@style/Widget.Yelena.Card"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="6dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:padding="16dp">
+                            <ImageView
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:src="@drawable/ic_menu"
+                                android:tint="@color/accent_green"
+                                android:contentDescription="@string/keyboard_title"
+                                android:layout_marginBottom="8dp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/keyboard_title"
+                                android:textColor="@color/text_primary"
+                                android:textSize="13sp"
+                                android:textStyle="bold"/>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
+
+    <!-- ── Panel del drawer — SIEMPRE al final, gravity=start ── -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navView"
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@color/bg_card"
+        app:menu="@menu/drawer_menu"
+        app:headerLayout="@layout/nav_header"/>
+
+</androidx.drawerlayout.widget.DrawerLayout>

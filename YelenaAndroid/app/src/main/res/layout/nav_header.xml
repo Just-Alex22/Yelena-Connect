@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:orientation="vertical" android:background="@color/bg_card"
+    android:paddingHorizontal="24dp" android:paddingTop="48dp" android:paddingBottom="20dp">
+    <ImageView android:layout_width="48dp" android:layout_height="48dp"
+        android:src="@mipmap/ic_launcher_round" android:layout_marginBottom="12dp"
+        android:contentDescription="Logo"/>
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="Yelena Connect" android:textColor="@color/text_primary"
+        android:textSize="16sp" android:textStyle="bold" android:layout_marginBottom="2dp"/>
+    <TextView android:id="@+id/tvNavSubtitle"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="v1.0.0 · CuerdOS" android:textColor="@color/text_disabled" android:textSize="12sp"/>
+</LinearLayout>

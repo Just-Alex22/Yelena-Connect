@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:background="@color/bg_view">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical"
+        android:paddingHorizontal="16dp" android:paddingTop="48dp" android:paddingBottom="12dp"
+        android:background="@color/bg_view">
+        <ImageButton android:id="@+id/btnBack" android:layout_width="40dp" android:layout_height="40dp"
+            android:src="@drawable/ic_arrow_back"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:tint="@color/text_primary" android:contentDescription="Atrás"/>
+        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="12dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Terminal" android:textColor="@color/text_primary"
+                android:textSize="16sp" android:textStyle="bold"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Shell del PC" android:textColor="@color/text_disabled" android:textSize="11sp"/>
+        </LinearLayout>
+    </LinearLayout>
+    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/bg_card"/>
+    <ScrollView android:id="@+id/scrollOutput" android:layout_width="match_parent"
+        android:layout_height="0dp" android:layout_weight="1" android:padding="16dp" android:fillViewport="true">
+        <TextView android:id="@+id/tvOutput" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:textColor="@color/accent_green"
+            android:textSize="13sp" android:fontFamily="monospace" android:lineSpacingExtra="3dp"/>
+    </ScrollView>
+    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/bg_card"/>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical"
+        android:background="@color/bg_window" android:paddingHorizontal="16dp" android:paddingVertical="8dp">
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="$ " android:textColor="@color/accent_mauve" android:textSize="14sp"
+            android:fontFamily="monospace"/>
+        <EditText android:id="@+id/etCommand" android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1" android:hint="Escribe un comando..."
+            android:textColor="@color/text_primary" android:textColorHint="@color/text_disabled"
+            android:textSize="14sp" android:fontFamily="monospace" android:background="@null"
+            android:imeOptions="actionSend" android:inputType="text|textNoSuggestions" android:maxLines="1"/>
+        <ImageButton android:id="@+id/btnSend" android:layout_width="40dp" android:layout_height="40dp"
+            android:src="@drawable/ic_send" android:background="?attr/selectableItemBackgroundBorderless"
+            android:tint="@color/accent_mauve" android:contentDescription="Enviar"/>
+    </LinearLayout>
+</LinearLayout>

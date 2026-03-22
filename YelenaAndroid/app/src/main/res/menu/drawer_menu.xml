@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="none">
+        <item android:id="@+id/nav_trackpad"
+            android:icon="@drawable/ic_menu"
+            android:title="@string/nav_keyboard"/>
+        <item android:id="@+id/nav_terminal"
+            android:icon="@drawable/ic_terminal"
+            android:title="@string/nav_terminal"/>
+        <item android:id="@+id/nav_notifications"
+            android:icon="@drawable/ic_info"
+            android:title="@string/nav_notifications"/>
+        <item android:id="@+id/nav_processes"
+            android:icon="@drawable/ic_info"
+            android:title="@string/nav_processes"/>
+        <item android:id="@+id/nav_apps"
+            android:icon="@drawable/ic_menu"
+            android:title="@string/nav_apps"/>
+        <item android:id="@+id/nav_clipboard"
+            android:icon="@drawable/ic_send"
+            android:title="@string/nav_clipboard"/>
+        <item android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings"
+            android:title="@string/nav_settings"/>
+        <item android:id="@+id/nav_about"
+            android:icon="@drawable/ic_info"
+            android:title="@string/nav_about"/>
+    </group>
+
+    <group>
+        <item android:id="@+id/nav_disconnect"
+            android:icon="@drawable/ic_disconnect"
+            android:title="@string/nav_disconnect"/>
+    </group>
+
+</menu>

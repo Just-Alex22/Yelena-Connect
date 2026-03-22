@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Fondos Adwaita oscuro -->
+    <color name="bg_window">#242424</color>
+    <color name="bg_view">#1e1e1e</color>
+    <color name="bg_card">#2e2e2e</color>
+    <color name="bg_elevated">#383838</color>
+    <color name="bg_accent">#5a7a22</color>
+
+    <!-- Texto -->
+    <color name="text_primary">#ffffff</color>
+    <color name="text_secondary">#c0bfbc</color>
+    <color name="text_disabled">#77767b</color>
+    <color name="white">#ffffff</color>
+
+    <!-- Acentos Catppuccin Mocha -->
+    <color name="accent_blue">#89b4fa</color>
+    <color name="accent_green">#5a7a22</color>
+    <color name="accent_red">#f38ba8</color>
+    <color name="accent_yellow">#f9e2af</color>
+    <color name="accent_mauve">#5a7a22</color>
+    <color name="accent_teal">#94e2d5</color>
+
+    <!-- Material aliases -->
+    <color name="colorPrimary">#5a7a22</color>
+    <color name="colorOnPrimary">#ffffff</color>
+    <color name="colorSurface">#242424</color>
+    <color name="colorOnSurface">#cdd6f4</color>
+    <color name="colorSurfaceVariant">#2e2e2e</color>
+
+    <!-- Estado de conexión -->
+    <color name="connected">#5a7a22</color>
+    <color name="disconnected">#f38ba8</color>
+    <color name="connecting">#f9e2af</color>
+
+    <!-- Alias faltantes -->
+    <color name="bg_deep">#1a1a1a</color>
+    <color name="bg_surface">#242424</color>
+    <color name="text_tertiary">#6c7086</color>
+    <color name="blue_accent">#62a0ea</color>
+    <color name="green_accent">#5a7a22</color>
+
+    <!-- Alias de fix_android.sh (verde CuerdOS) -->
+    <color name="accent_green_dark">#5a7a22</color>
+    <color name="accent_green_light">#a3c44a</color>
+    <color name="color_success">#57e389</color>
+    <color name="color_warning">#f8e45c</color>
+    <color name="color_error">#ff7b63</color>
+    <color name="color_info">#62a0ea</color>
+</resources>

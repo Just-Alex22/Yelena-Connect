@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Yelena Connect</string>
+
+    <!-- Welcome -->
+    <string name="welcome_title">Bienvenido a\nYelena Connect</string>
+    <string name="welcome_subtitle">Controla tu PC desde tu teléfono.\nEscanea el código QR o conéctate automáticamente.</string>
+    <string name="btn_start">Comenzar</string>
+    <string name="privacy_policy">Al continuar aceptas nuestra Política de Privacidad</string>
+
+    <!-- Connect -->
+    <string name="connect_title">Conectar a Yelena Connect</string>
+    <string name="searching">Buscando Yelena Connect en la red…</string>
+    <string name="on_network">EN LA RED</string>
+    <string name="qr_section">CÓDIGO QR</string>
+    <string name="manual_section">MANUAL</string>
+    <string name="btn_scan_qr">Escanear código QR</string>
+    <string name="btn_connect">Conectar</string>
+    <string name="hint_ip">IP del PC (ej. 192.168.1.x)</string>
+    <string name="hint_port">Puerto (8765)</string>
+    <string name="enter_ip">Ingresa una IP</string>
+    <string name="qr_invalid">QR inválido</string>
+
+    <!-- QR Scanner -->
+    <string name="qr_scanner_title">Escanear QR</string>
+    <string name="qr_instruction">Apunta al código QR de Yelena Connect en tu PC</string>
+
+    <!-- Main -->
+    <string name="disconnected">Desconectado</string>
+    <string name="connected_to">Conectado · %1$s</string>
+    <string name="resources_title">RECURSOS DEL PC</string>
+    <string name="uptime_label">Tiempo activo</string>
+    <string name="cpu_label">CPU</string>
+    <string name="ram_label">RAM</string>
+    <string name="disk_label">Disco</string>
+    <string name="no_notifications">Sin notificaciones</string>
+    <string name="terminal_label">Terminal</string>
+    <string name="terminal_desc">Ejecutar comandos en el PC</string>
+    <string name="trackpad_label">Trackpad</string>
+    <string name="trackpad_desc">Controlar el ratón del PC</string>
+
+    <!-- Drawer -->
+    <string name="nav_trackpad">Trackpad / Ratón</string>
+    <string name="nav_terminal">Terminal</string>
+    <string name="nav_notifications">Notificaciones</string>
+    <string name="nav_processes">Procesos</string>
+    <string name="nav_apps">Aplicaciones del PC</string>
+    <string name="nav_clipboard">Portapapeles</string>
+    <string name="nav_settings">Configuración</string>
+    <string name="nav_about">Acerca de</string>
+    <string name="nav_disconnect">Desconectar</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Configuración</string>
+    <string name="appearance_section">APARIENCIA</string>
+    <string name="theme_label">Tema</string>
+    <string name="theme_desc">Sigue el sistema</string>
+    <string name="language_section">IDIOMA</string>
+    <string name="connection_section">CONEXIÓN</string>
+    <string name="ws_port_label">Puerto WebSocket</string>
+
+    <!-- Notifications -->
+    <string name="notifications_title">Notificaciones del PC</string>
+    <string name="no_notifs">Sin notificaciones</string>
+
+    <!-- Processes -->
+    <string name="processes_title">Procesos</string>
+    <string name="loading">Cargando…</string>
+    <string name="terminate_process">Terminar proceso</string>
+    <string name="terminate_confirm">¿Terminar %1$s (PID %2$s)?</string>
+    <string name="terminate">Terminar</string>
+    <string name="cancel">Cancelar</string>
+
+    <!-- Apps -->
+    <string name="apps_title">Aplicaciones del PC</string>
+
+    <!-- Clipboard -->
+    <string name="clipboard_title">Historial del portapapeles</string>
+    <string name="no_history">Sin historial</string>
+    <string name="copied_to_pc">Copiado al PC</string>
+
+    <!-- Trackpad -->
+    <string name="trackpad_title">Trackpad / Ratón</string>
+    <string name="type_hint">Escribir en el PC…</string>
+    <string name="btn_left">Izq</string>
+    <string name="btn_middle">Med</string>
+    <string name="btn_right">Der</string>
+
+    <!-- Terminal -->
+    <string name="terminal_title">Terminal</string>
+    <string name="command_hint">Comando…</string>
+
+    <!-- About -->
+    <string name="about_title">Acerca de</string>
+    <string name="about_version">v1.0.0 · CuerdOS</string>
+    <string name="visit_website">Visitar sitio web</string>
+
+    <!-- Common -->
+    <string name="btn_back">Atrás</string>
+    <string name="btn_refresh">Actualizar</string>
+    <string name="btn_send">Enviar</string>
+    <string name="coming_soon">Próximamente…</string>
+    <string name="no_device">Sin dispositivo conectado</string>
+    <string name="error_prefix">Error: %1$s</string>
+    <string name="keyboard_title">Teclado remoto</string>
+    <string name="nav_keyboard">Teclado remoto</string>
+    <string name="keyboard_hint">Escribe aquí para enviar al PC…</string>
+    <string name="special_keys">Teclas especiales</string>
+    <string name="clipboard_current">PORTAPAPELES ACTUAL</string>
+    <string name="history_label">HISTORIAL</string>
+</resources>

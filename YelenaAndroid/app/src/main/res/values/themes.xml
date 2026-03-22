@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Yelena" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorOnPrimary">@color/colorOnPrimary</item>
+        <item name="colorSurface">@color/colorSurface</item>
+        <item name="colorOnSurface">@color/colorOnSurface</item>
+        <item name="colorSurfaceVariant">@color/colorSurfaceVariant</item>
+        <item name="android:colorBackground">@color/bg_window</item>
+        <item name="android:statusBarColor">@color/bg_view</item>
+        <item name="android:navigationBarColor">@color/bg_view</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <!-- Switch: track verde oscuro, thumb blanco -->
+        <item name="colorControlActivated">@color/accent_green</item>
+        <item name="switchMinWidth">48dp</item>
+    </style>
+
+    <!-- Botón primario verde oscuro CuerdOS -->
+    <style name="Widget.Yelena.Button" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/accent_green</item>
+        <item name="android:textColor">@color/colorOnPrimary</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Botón outline -->
+    <style name="Widget.Yelena.Button.Outline" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="strokeColor">@color/bg_elevated</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="cornerRadius">12dp</item>
+    </style>
+
+    <!-- Botón texto -->
+    <style name="Widget.Yelena.Button.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textColor">@color/accent_blue</item>
+    </style>
+
+    <!-- Switch: todo verde oscuro -->
+    <style name="Widget.Yelena.Switch" parent="Widget.Material3.CompoundButton.MaterialSwitch">
+        <item name="trackTint">@color/switch_track_selector</item>
+        <item name="thumbTint">@color/switch_thumb_selector</item>
+    </style>
+
+    <!-- Tarjeta -->
+    <style name="Widget.Yelena.Card" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardBackgroundColor">@color/bg_card</item>
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">0dp</item>
+    </style>
+
+    <!-- TextAppearances -->
+    <style name="TextAppearance.Yelena.Display" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="TextAppearance.Yelena.Title" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="TextAppearance.Yelena.Body" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">@color/text_secondary</item>
+    </style>
+    <style name="TextAppearance.Yelena.Caption" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textColor">@color/text_disabled</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.1</item>
+    </style>
+</resources>
