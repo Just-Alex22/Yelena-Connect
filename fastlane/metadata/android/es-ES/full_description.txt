@@ -1,0 +1,17 @@
+Yelena Connect te permite controlar tu PC con Linux desde tu teléfono Android a través de tu red Wi-Fi local. Sin cable USB, sin cuenta en la nube, sin servicios propietarios.
+
+<b>Características</b>
+
+* Teclado remoto — escribe texto y envía teclas especiales a tu PC
+* Sincronización del portapapeles — portapapeles bidireccional entre el teléfono y el PC en tiempo real
+* Controles multimedia — reproducir, pausar, saltar pistas y ajustar el volumen
+* Monitor del sistema — uso de CPU, RAM y disco en tiempo real
+* Gestor de procesos — ver y terminar procesos en ejecución
+* Lanzador de apps — abrir aplicaciones instaladas de forma remota
+* Notificaciones del PC — ver las notificaciones de tu PC en el teléfono
+* Transferencia de archivos — enviar archivos entre dispositivos
+* Emparejamiento por QR — conexión fácil escaneando un código QR
+
+<b>Requisitos</b>
+
+Requiere el applet de escritorio Yelena Connect en tu PC con Linux (disponible en el mismo repositorio). Sin cuenta ni conexión a internet necesaria — todo permanece en tu red local.
