@@ -570,7 +570,7 @@ class YelenaTray:
     def _on_about(self, _):
         about = Gtk.AboutDialog()
         about.set_program_name("Yelena Connect")
-        about.set_version("v0.2-beta")
+        about.set_version("v1.0-1")
         about.set_copyright("© 2026 CuerdOS")
         about.set_license_type(Gtk.License.GPL_3_0)
         about.set_website("https://cuerdos.github.io")
