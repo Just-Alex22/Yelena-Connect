@@ -28,9 +28,7 @@ class ClipboardHistoryFragment : Fragment() {
     override fun onViewCreated(v: View, s: Bundle?) {
         super.onViewCreated(v, s)
 
-        b.toolbar.title = getString(R.string.clipboard_title)
-        b.toolbar.setNavigationIcon(R.drawable.ic_arrow_back)
-        b.toolbar.setNavigationOnClickListener { findNavController().popBackStack() }
+        b.btnBack.setOnClickListener { findNavController().popBackStack() }
 
         b.btnQuickSend.setOnClickListener { sendQuickText() }
         b.etQuickSend.setOnEditorActionListener { _, actionId, _ ->
