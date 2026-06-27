@@ -31,7 +31,7 @@ Y-Connect</string>
     <string name="terminal_desc">Esegui comandi sul PC</string>
     <string name="trackpad_label">Trackpad</string>
     <string name="trackpad_desc">Controlla il mouse del PC</string>
-    <string name="nav_trackpad">Trackpad / Mouse</string>
+    <string name="nav_trackpad">Presentazione</string>
     <string name="nav_terminal">Terminale</string>
     <string name="nav_notifications">Notifiche</string>
     <string name="nav_processes">Processi</string>
@@ -81,7 +81,7 @@ Y-Connect</string>
     <string name="error_prefix">Errore: %1$s</string>
     <string name="keyboard_title">Tastiera remota</string>
     <string name="nav_keyboard">Tastiera remota</string>
-    <string name="keyboard_hint">Scrivi qui — verrà incollato sul PC</string>
+    <string name="keyboard_hint">Scrivi qui per inviare al PC…</string>
     <string name="special_keys">Tasti speciali</string>
     <string name="clipboard_current">APPUNTI CORRENTI</string>
     <string name="history_label">CRONOLOGIA</string>
@@ -113,4 +113,13 @@ Y-Connect</string>
     <string name="snippet_section">FRAMMENTI</string>
     <string name="history_section">CRONOLOGIA</string>
     <string name="nav_subtitle">v1.0.0 · CuerdOS</string>
+    <string name="pres_start">Avvia</string>
+    <string name="pres_stop">Ferma</string>
+    <string name="pres_next">Successivo ▶</string>
+    <string name="pres_prev">◀ Precedente</string>
+    <string name="pres_black">⬛ Schermo nero</string>
+    <string name="pres_white">⬜ Schermo bianco</string>
+    <string name="pres_goto_label">VAI ALLA DIAPOSITIVA</string>
+    <string name="pres_slide_number">Numero diapositiva</string>
+    <string name="pres_goto">Vai</string>
 </resources>

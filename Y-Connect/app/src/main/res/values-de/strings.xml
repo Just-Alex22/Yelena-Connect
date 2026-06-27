@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Y-Connect</string>
-    <string name="welcome_title">Willkommen bei
-Y-Connect</string>
+    <string name="welcome_title">Willkommen bei \nY-Connect</string>
     <string name="welcome_subtitle">Steuere deinen PC vom Handy aus.\nScanne den QR-Code oder verbinde dich automatisch.</string>
     <string name="btn_start">Starten</string>
     <string name="privacy_policy">Mit dem Fortfahren stimmst du unserer Datenschutzrichtlinie zu</string>
@@ -31,7 +30,7 @@ Y-Connect</string>
     <string name="terminal_desc">Befehle auf dem PC ausführen</string>
     <string name="trackpad_label">Trackpad</string>
     <string name="trackpad_desc">Maus des PCs steuern</string>
-    <string name="nav_trackpad">Trackpad / Maus</string>
+    <string name="nav_trackpad">Präsentation</string>
     <string name="nav_terminal">Terminal</string>
     <string name="nav_notifications">Benachrichtigungen</string>
     <string name="nav_processes">Prozesse</string>
@@ -81,7 +80,7 @@ Y-Connect</string>
     <string name="error_prefix">Fehler: %1$s</string>
     <string name="keyboard_title">Ferntastatur</string>
     <string name="nav_keyboard">Ferntastatur</string>
-    <string name="keyboard_hint">Hier tippen — wird auf dem PC eingefügt</string>
+    <string name="keyboard_hint">Hier tippen zum Senden an PC…</string>
     <string name="special_keys">Sondertasten</string>
     <string name="clipboard_current">AKTUELLE ZWISCHENABLAGE</string>
     <string name="history_label">VERLAUF</string>
@@ -113,4 +112,13 @@ Y-Connect</string>
     <string name="snippet_section">SNIPPETS</string>
     <string name="history_section">VERLAUF</string>
     <string name="nav_subtitle">v1.0.0 · CuerdOS</string>
+    <string name="pres_start">Starten</string>
+    <string name="pres_stop">Stoppen</string>
+    <string name="pres_next">Weiter ▶</string>
+    <string name="pres_prev">◀ Zurück</string>
+    <string name="pres_black">⬛ Schwarzer Bildschirm</string>
+    <string name="pres_white">⬜ Weißer Bildschirm</string>
+    <string name="pres_goto_label">ZU FOLIE GEHEN</string>
+    <string name="pres_slide_number">Foliennummer</string>
+    <string name="pres_goto">Gehen</string>
 </resources>

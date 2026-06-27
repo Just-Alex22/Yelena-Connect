@@ -95,7 +95,6 @@
     <string name="special_keys">Teclas especiales</string>
     <string name="clipboard_current">PORTAPAPELES ACTUAL</string>
     <string name="history_label">HISTORIAL</string>
-    <string name="history_section">HISTORIAL</string> 
     <string name="accent_color">Color de acento</string>
     <string name="notif_permission_title">Acceso a notificaciones</string>
     <string name="notif_permission_message">Y-Connect necesita acceso a tus notificaciones para mostrarlas en el PC.</string>
@@ -124,13 +123,22 @@
     <string name="about_license_name">GNU General Public License v3.0</string>
     <string name="about_open_source">Free and open source software</string>
     <string name="about_open">Open</string>
-
-    <string name="manual_connect">Conexión manual</string>
-    <string name="nav_subtitle">Aplicación de acompañamiento</string>
+    <string name="history_section">HISTORIAL</string>
+    <string name="manual_connect">Conectar manualmente</string>
+    <string name="nav_subtitle">v1.0.0 · CuerdOS</string>
     <string name="no_content">Sin contenido</string>
-    <string name="phone_clip_to_pc">Enviar portapapeles al PC</string>
-    <string name="qr_title">Escanear QR</string>
-    <string name="quick_send_hint">Escribe algo para enviar rápidamente…</string>
+    <string name="phone_clip_to_pc">Enviar portapapeles del móvil al PC</string>
+    <string name="pres_black">⬛ Pantalla negra</string>
+    <string name="pres_goto">Ir</string>
+    <string name="pres_goto_label">IR A DIAPOSITIVA</string>
+    <string name="pres_next">Siguiente ▶</string>
+    <string name="pres_prev">◀ Anterior</string>
+    <string name="pres_slide_number">Número de diapositiva</string>
+    <string name="pres_start">Iniciar</string>
+    <string name="pres_stop">Detener</string>
+    <string name="pres_white">⬜ Pantalla blanca</string>
+    <string name="qr_title">Conectar a Y-Connect</string>
+    <string name="quick_send_hint">Escribir texto para enviar al PC…</string>
     <string name="quick_send_section">ENVÍO RÁPIDO</string>
     <string name="send_to_pc">Enviar al PC</string>
     <string name="snippet_section">FRAGMENTOS</string>

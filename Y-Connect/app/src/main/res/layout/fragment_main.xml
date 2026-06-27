@@ -277,12 +277,12 @@
                                 android:layout_height="28dp"
                                 android:src="@drawable/ic_menu"
                                 android:tint="?attr/colorPrimary"
-                                android:contentDescription="@string/keyboard_title"
+                                android:contentDescription="@string/nav_apps"
                                 android:layout_marginBottom="8dp"/>
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/keyboard_title"
+                                android:text="@string/nav_apps"
                                 android:textColor="@color/text_primary"
                                 android:textSize="13sp"
                                 android:textStyle="bold"/>

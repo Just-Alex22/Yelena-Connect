@@ -2,9 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="none">
-        <item android:id="@+id/nav_trackpad"
-            android:icon="@drawable/ic_menu"
-            android:title="@string/nav_keyboard"/>
         <item android:id="@+id/nav_terminal"
             android:icon="@drawable/ic_terminal"
             android:title="@string/nav_terminal"/>

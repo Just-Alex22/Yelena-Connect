@@ -55,7 +55,7 @@ class MainFragment : Fragment() {
             findNavController().navigate(R.id.action_main_to_terminal)
         }
         binding.cardTrackpad.setOnClickListener {
-            findNavController().navigate(R.id.action_main_to_trackpad)
+            findNavController().navigate(R.id.action_main_to_apps)
         }
         observeState()
     }

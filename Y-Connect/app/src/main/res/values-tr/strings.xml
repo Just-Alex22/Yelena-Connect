@@ -31,7 +31,7 @@ Hoş Geldiniz</string>
     <string name="terminal_desc">PC\'de komut çalıştır</string>
     <string name="trackpad_label">Trackpad</string>
     <string name="trackpad_desc">PC faresini kontrol et</string>
-    <string name="nav_trackpad">Trackpad / Fare</string>
+    <string name="nav_trackpad">Sunum</string>
     <string name="nav_terminal">Terminal</string>
     <string name="nav_notifications">Bildirimler</string>
     <string name="nav_processes">Süreçler</string>
@@ -81,7 +81,7 @@ Hoş Geldiniz</string>
     <string name="error_prefix">Hata: %1$s</string>
     <string name="keyboard_title">Uzak Klavye</string>
     <string name="nav_keyboard">Uzak Klavye</string>
-    <string name="keyboard_hint">Buraya yazın — PC\'ye yapıştırılacak</string>
+    <string name="keyboard_hint">PC\'ye göndermek için buraya yazın…</string>
     <string name="special_keys">Özel Tuşlar</string>
     <string name="clipboard_current">MEVCUT PANO</string>
     <string name="history_label">GEÇMİŞ</string>
@@ -113,4 +113,13 @@ Hoş Geldiniz</string>
     <string name="snippet_section">PARÇACIKLAR</string>
     <string name="history_section">GEÇMİŞ</string>
     <string name="nav_subtitle">v1.0.0 · CuerdOS</string>
+    <string name="pres_start">Başlat</string>
+    <string name="pres_stop">Durdur</string>
+    <string name="pres_next">Sonraki ▶</string>
+    <string name="pres_prev">◀ Önceki</string>
+    <string name="pres_black">⬛ Siyah ekran</string>
+    <string name="pres_white">⬜ Beyaz ekran</string>
+    <string name="pres_goto_label">SLAYTA GİT</string>
+    <string name="pres_slide_number">Slayt numarası</string>
+    <string name="pres_goto">Git</string>
 </resources>

@@ -31,7 +31,7 @@ Y-Connect</string>
     <string name="terminal_desc">Выполнять команды на ПК</string>
     <string name="trackpad_label">Трекпад</string>
     <string name="trackpad_desc">Управлять мышью ПК</string>
-    <string name="nav_trackpad">Трекпад / Мышь</string>
+    <string name="nav_trackpad">Презентация</string>
     <string name="nav_terminal">Терминал</string>
     <string name="nav_notifications">Уведомления</string>
     <string name="nav_processes">Процессы</string>
@@ -81,7 +81,7 @@ Y-Connect</string>
     <string name="error_prefix">Ошибка: %1$s</string>
     <string name="keyboard_title">Удалённая клавиатура</string>
     <string name="nav_keyboard">Удалённая клавиатура</string>
-    <string name="keyboard_hint">Введите здесь — будет вставлено на ПК</string>
+    <string name="keyboard_hint">Введите здесь для отправки на ПК…</string>
     <string name="special_keys">Специальные клавиши</string>
     <string name="clipboard_current">ТЕКУЩИЙ БУФЕР</string>
     <string name="history_label">ИСТОРИЯ</string>
@@ -113,4 +113,13 @@ Y-Connect</string>
     <string name="snippet_section">ФРАГМЕНТЫ</string>
     <string name="history_section">ИСТОРИЯ</string>
     <string name="nav_subtitle">v1.0.0 · CuerdOS</string>
+    <string name="pres_start">Начать</string>
+    <string name="pres_stop">Стоп</string>
+    <string name="pres_next">Следующий ▶</string>
+    <string name="pres_prev">◀ Предыдущий</string>
+    <string name="pres_black">⬛ Чёрный экран</string>
+    <string name="pres_white">⬜ Белый экран</string>
+    <string name="pres_goto_label">ПЕРЕЙТИ К СЛАЙДУ</string>
+    <string name="pres_slide_number">Номер слайда</string>
+    <string name="pres_goto">Перейти</string>
 </resources>

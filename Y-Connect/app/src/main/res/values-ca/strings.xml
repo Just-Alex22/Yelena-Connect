@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Y-Connect</string>
-    <string name="welcome_title">Benvingut a
-Y-Connect</string>
+    <string name="welcome_title">Benvingut a \nY-Connect</string>
     <string name="welcome_subtitle">Controla el teu PC des del telèfon.\nEscaneja el QR o connecta\'t automàticament.</string>
     <string name="btn_start">Comença</string>
     <string name="privacy_policy">En continuar acceptes la nostra Política de Privacitat</string>
@@ -31,7 +30,7 @@ Y-Connect</string>
     <string name="terminal_desc">Executar ordres al PC</string>
     <string name="trackpad_label">Trackpad</string>
     <string name="trackpad_desc">Controlar el ratolí del PC</string>
-    <string name="nav_trackpad">Trackpad / Ratolí</string>
+    <string name="nav_trackpad">Presentació</string>
     <string name="nav_terminal">Terminal</string>
     <string name="nav_notifications">Notificacions</string>
     <string name="nav_processes">Processos</string>
@@ -77,7 +76,7 @@ Y-Connect</string>
     <string name="error_prefix">Error: %1$s</string>
     <string name="keyboard_title">Teclat remot</string>
     <string name="nav_keyboard">Teclat remot</string>
-    <string name="keyboard_hint">Escriu aquí — s\'enganxarà al PC</string>
+    <string name="keyboard_hint">Escriu aquí per enviar al PC…</string>
     <string name="special_keys">Tecles especials</string>
     <string name="clipboard_current">PORTA-RETALLS ACTUAL</string>
     <string name="history_label">HISTORIAL</string>
@@ -104,4 +103,13 @@ Y-Connect</string>
     <string name="snippet_section">FRAGMENTS</string>
     <string name="history_section">HISTORIAL</string>
     <string name="nav_subtitle">v1.0.0 · CuerdOS</string>
+    <string name="pres_start">Iniciar</string>
+    <string name="pres_stop">Aturar</string>
+    <string name="pres_next">Següent ▶</string>
+    <string name="pres_prev">◀ Anterior</string>
+    <string name="pres_black">⬛ Pantalla negra</string>
+    <string name="pres_white">⬜ Pantalla blanca</string>
+    <string name="pres_goto_label">ANAR A DIAPOSITIVA</string>
+    <string name="pres_slide_number">Número de diapositiva</string>
+    <string name="pres_goto">Anar</string>
 </resources>

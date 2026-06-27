@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Y-Connect</string>
-    <string name="welcome_title">Welcome to
-Y-Connect</string>
+    <string name="welcome_title">Welcome to\nY-Connect</string>
     <string name="welcome_subtitle">Control your PC from your phone.\nScan the QR code or connect automatically.</string>
     <string name="btn_start">Get started</string>
     <string name="privacy_policy">By continuing you accept our Privacy Policy</string>
@@ -31,7 +30,7 @@ Y-Connect</string>
     <string name="terminal_desc">Run commands on the PC</string>
     <string name="trackpad_label">Trackpad</string>
     <string name="trackpad_desc">Control the PC mouse</string>
-    <string name="nav_trackpad">Trackpad / Mouse</string>
+    <string name="nav_trackpad">Presentation</string>
     <string name="nav_terminal">Terminal</string>
     <string name="nav_notifications">Notifications</string>
     <string name="nav_processes">Processes</string>
@@ -77,7 +76,7 @@ Y-Connect</string>
     <string name="error_prefix">Error: %1$s</string>
     <string name="keyboard_title">Remote keyboard</string>
     <string name="nav_keyboard">Remote keyboard</string>
-    <string name="keyboard_hint">Type here — will be pasted on PC</string>
+    <string name="keyboard_hint">Type here to send to PC…</string>
     <string name="special_keys">Special keys</string>
     <string name="clipboard_current">CURRENT CLIPBOARD</string>
     <string name="history_label">HISTORY</string>
@@ -113,4 +112,13 @@ Y-Connect</string>
     <string name="snippet_section">SNIPPETS</string>
     <string name="history_section">HISTORY</string>
     <string name="nav_subtitle">v1.0.0 · CuerdOS</string>
+    <string name="pres_start">Start</string>
+    <string name="pres_stop">Stop</string>
+    <string name="pres_next">Next ▶</string>
+    <string name="pres_prev">◀ Previous</string>
+    <string name="pres_black">⬛ Black screen</string>
+    <string name="pres_white">⬜ White screen</string>
+    <string name="pres_goto_label">GO TO SLIDE</string>
+    <string name="pres_slide_number">Slide number</string>
+    <string name="pres_goto">Go</string>
 </resources>

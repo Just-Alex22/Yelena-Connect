@@ -31,7 +31,7 @@ Y-Connect</string>
     <string name="terminal_desc">Exécuter des commandes sur le PC</string>
     <string name="trackpad_label">Trackpad</string>
     <string name="trackpad_desc">Contrôler la souris du PC</string>
-    <string name="nav_trackpad">Trackpad / Souris</string>
+    <string name="nav_trackpad">Présentation</string>
     <string name="nav_terminal">Terminal</string>
     <string name="nav_notifications">Notifications</string>
     <string name="nav_processes">Processus</string>
@@ -81,7 +81,7 @@ Y-Connect</string>
     <string name="error_prefix">Erreur: %1$s</string>
     <string name="keyboard_title">Clavier distant</string>
     <string name="nav_keyboard">Clavier distant</string>
-    <string name="keyboard_hint">Tapez ici — sera collé sur le PC</string>
+    <string name="keyboard_hint">Tapez ici pour envoyer au PC…</string>
     <string name="special_keys">Touches spéciales</string>
     <string name="clipboard_current">PRESSE-PAPIERS ACTUEL</string>
     <string name="history_label">HISTORIQUE</string>
@@ -113,4 +113,13 @@ Y-Connect</string>
     <string name="snippet_section">EXTRAITS</string>
     <string name="history_section">HISTORIQUE</string>
     <string name="nav_subtitle">v1.0.0 · CuerdOS</string>
+    <string name="pres_start">Démarrer</string>
+    <string name="pres_stop">Arrêter</string>
+    <string name="pres_next">Suivant ▶</string>
+    <string name="pres_prev">◀ Précédent</string>
+    <string name="pres_black">⬛ Écran noir</string>
+    <string name="pres_white">⬜ Écran blanc</string>
+    <string name="pres_goto_label">ALLER À LA DIAPOSITIVE</string>
+    <string name="pres_slide_number">Numéro de diapositive</string>
+    <string name="pres_goto">Aller</string>
 </resources>

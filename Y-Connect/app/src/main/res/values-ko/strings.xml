@@ -31,7 +31,7 @@
     <string name="terminal_desc">PC에서 명령 실행</string>
     <string name="trackpad_label">트랙패드</string>
     <string name="trackpad_desc">PC 마우스 제어</string>
-    <string name="nav_trackpad">트랙패드 / 마우스</string>
+    <string name="nav_trackpad">프레젠테이션</string>
     <string name="nav_terminal">터미널</string>
     <string name="nav_notifications">알림</string>
     <string name="nav_processes">프로세스</string>
@@ -81,7 +81,7 @@
     <string name="error_prefix">오류: %1$s</string>
     <string name="keyboard_title">원격 키보드</string>
     <string name="nav_keyboard">원격 키보드</string>
-    <string name="keyboard_hint">여기에 입력 — PC에 붙여넣기됩니다</string>
+    <string name="keyboard_hint">여기에 입력하여 PC로 전송…</string>
     <string name="special_keys">특수 키</string>
     <string name="clipboard_current">현재 클립보드</string>
     <string name="history_label">기록</string>
@@ -113,4 +113,13 @@
     <string name="snippet_section">스니펫</string>
     <string name="history_section">기록</string>
     <string name="nav_subtitle">v1.0.0 · CuerdOS</string>
+    <string name="pres_start">시작</string>
+    <string name="pres_stop">정지</string>
+    <string name="pres_next">다음 ▶</string>
+    <string name="pres_prev">◀ 이전</string>
+    <string name="pres_black">⬛ 검은 화면</string>
+    <string name="pres_white">⬜ 흰 화면</string>
+    <string name="pres_goto_label">슬라이드로 이동</string>
+    <string name="pres_slide_number">슬라이드 번호</string>
+    <string name="pres_goto">이동</string>
 </resources>
