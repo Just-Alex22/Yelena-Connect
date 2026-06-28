@@ -42,6 +42,10 @@ class YelenaService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == ACTION_STOP) {
+            getSharedPreferences("yelena_prefs", Context.MODE_PRIVATE)
+                .edit().remove("last_ip").remove("last_port").apply()
+            running = false
+            reconnectThread?.interrupt()
             YelenaWebSocket.disconnect()
             stopSelf()
             return START_NOT_STICKY
@@ -51,7 +55,7 @@ class YelenaService : Service() {
         acquireWakeLock()
         startReconnectLoop()
 
-        return START_STICKY
+        return START_REDELIVER_INTENT
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
