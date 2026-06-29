@@ -425,6 +425,9 @@ def _on_media(d):
 def _on_accent_color(hex_color):
     bridge.send({"t":"accent_color","d":{"hex":hex_color}})
 
+def _on_phone_notifs(notifs):
+    bridge.send({"t":"notifs","d":notifs})
+
 def _on_file_accept(tid):
     threading.Thread(target=transfer_mgr.on_file_accepted, args=(tid,), daemon=True).start()
 
@@ -604,6 +607,7 @@ def main():
     manager.on_resources_changed(_on_resources)
     manager.on_phone_media_changed(_on_media)
     manager.on_accent_color_changed(_on_accent_color)
+    manager.on_phone_notifs_changed(_on_phone_notifs)
     manager.on_file_accept_changed(_on_file_accept)
     manager.on_file_reject_changed(_on_file_reject)
     manager.on_phone_volume_changed(_on_volume)

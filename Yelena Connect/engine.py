@@ -14,7 +14,6 @@ import base64
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional, Callable
-from dataclasses import dataclass
 
 try:
     import websockets
@@ -74,6 +73,7 @@ def adb_shell(cmd_str: str, device_serial: str = None, timeout: int = 5) -> str:
     return adb(["shell", cmd_str], device_serial=device_serial, timeout=timeout)
 
 def list_devices() -> list[dict]:
+
     output = adb(["devices", "-l"], timeout=8)
     devices = []
     for line in output.splitlines()[1:]:
@@ -87,9 +87,12 @@ def list_devices() -> list[dict]:
         state = parts[1]
         if state != "device":
             continue
+
         model_m = re.search(r"model:(\S+)", line)
         name = model_m.group(1) if model_m else serial
+
         conn_type = "wifi" if re.match(r"^\d+\.\d+\.\d+\.\d+:\d+$", serial) else "usb"
+
         devices.append({
             "serial": serial,
             "state": state,
@@ -191,61 +194,67 @@ class ResourceMonitor:
     def _fetch(self) -> dict:
         s = self._serial
         result: dict = {}
+
         with ThreadPoolExecutor(max_workers=4) as pool:
             f_cpu = pool.submit(adb_shell, "dumpsys cpuinfo | grep TOTAL", s, 4)
             f_mem = pool.submit(adb_shell, "cat /proc/meminfo", s, 4)
             f_bat = pool.submit(adb_shell, "dumpsys battery", s, 4)
             f_sto = pool.submit(adb_shell, "df /data 2>/dev/null | tail -1", s, 4)
-            try:
-                cpu_raw = f_cpu.result()
-                match = re.search(r"([\d.]+)%\s+TOTAL", cpu_raw)
-                if match:
-                    result["cpu"] = float(match.group(1))
-                else:
-                    stat1 = adb_shell("cat /proc/stat | head -1", s, timeout=3)
-                    time.sleep(0.5)
-                    stat2 = adb_shell("cat /proc/stat | head -1", s, timeout=3)
-                    result["cpu"] = self._parse_cpu_stat(stat1, stat2)
-            except Exception:
-                result["cpu"] = 0.0
-            try:
-                mem_raw = f_mem.result()
-                total = self._parse_meminfo(mem_raw, "MemTotal")
-                available = self._parse_meminfo(mem_raw, "MemAvailable")
-                if total and available:
-                    used = total - available
-                    result["ram_used_mb"] = round(used / 1024)
-                    result["ram_total_mb"] = round(total / 1024)
-                    result["ram_pct"] = round(used / total * 100, 1)
-            except Exception:
-                result["ram_used_mb"] = 0
-                result["ram_total_mb"] = 0
-                result["ram_pct"] = 0.0
-            try:
-                bat_raw = f_bat.result()
-                level_m = re.search(r"level:\s*(\d+)", bat_raw)
-                temp_m = re.search(r"temperature:\s*(\d+)", bat_raw)
-                charging_m = re.search(r"status:\s*(\d+)", bat_raw)
-                result["battery_pct"] = int(level_m.group(1)) if level_m else 0
-                result["battery_temp"] = round(int(temp_m.group(1)) / 10, 1) if temp_m else 0.0
-                result["battery_charging"] = (int(charging_m.group(1)) == 2) if charging_m else False
-            except Exception:
-                result["battery_pct"] = 0
-                result["battery_temp"] = 0.0
-                result["battery_charging"] = False
-            try:
-                df_raw = f_sto.result()
-                parts = df_raw.split()
-                if len(parts) >= 4:
-                    total_k = int(re.sub(r"[^\d]", "", parts[1]))
-                    used_k = int(re.sub(r"[^\d]", "", parts[2]))
-                    result["storage_used_gb"] = round(used_k / 1024 / 1024, 1)
-                    result["storage_total_gb"] = round(total_k / 1024 / 1024, 1)
-                    result["storage_pct"] = round(used_k / total_k * 100, 1) if total_k else 0
-            except Exception:
-                result["storage_used_gb"] = 0.0
-                result["storage_total_gb"] = 0.0
-                result["storage_pct"] = 0.0
+
+        try:
+            cpu_raw = f_cpu.result(timeout=6)
+            match = re.search(r"([\d.]+)%\s+TOTAL", cpu_raw)
+            if match:
+                result["cpu"] = float(match.group(1))
+            else:
+                stat1 = adb_shell("cat /proc/stat | head -1", s, timeout=3)
+                time.sleep(0.5)
+                stat2 = adb_shell("cat /proc/stat | head -1", s, timeout=3)
+                result["cpu"] = self._parse_cpu_stat(stat1, stat2)
+        except Exception:
+            result["cpu"] = 0.0
+
+        try:
+            mem_raw = f_mem.result(timeout=6)
+            total = self._parse_meminfo(mem_raw, "MemTotal")
+            available = self._parse_meminfo(mem_raw, "MemAvailable")
+            if total and available:
+                used = total - available
+                result["ram_used_mb"] = round(used / 1024)
+                result["ram_total_mb"] = round(total / 1024)
+                result["ram_pct"] = round(used / total * 100, 1)
+        except Exception:
+            result["ram_used_mb"] = 0
+            result["ram_total_mb"] = 0
+            result["ram_pct"] = 0.0
+
+        try:
+            bat_raw = f_bat.result(timeout=6)
+            level_m = re.search(r"level:\s*(\d+)", bat_raw)
+            temp_m = re.search(r"temperature:\s*(\d+)", bat_raw)
+            charging_m = re.search(r"status:\s*(\d+)", bat_raw)
+            result["battery_pct"] = int(level_m.group(1)) if level_m else 0
+            result["battery_temp"] = round(int(temp_m.group(1)) / 10, 1) if temp_m else 0.0
+            result["battery_charging"] = (int(charging_m.group(1)) == 2) if charging_m else False
+        except Exception:
+            result["battery_pct"] = 0
+            result["battery_temp"] = 0.0
+            result["battery_charging"] = False
+
+        try:
+            df_raw = f_sto.result(timeout=6)
+            parts = df_raw.split()
+            if len(parts) >= 4:
+                total_k = int(re.sub(r"[^\d]", "", parts[1]))
+                used_k = int(re.sub(r"[^\d]", "", parts[2]))
+                result["storage_used_gb"] = round(used_k / 1024 / 1024, 1)
+                result["storage_total_gb"] = round(total_k / 1024 / 1024, 1)
+                result["storage_pct"] = round(used_k / total_k * 100, 1) if total_k else 0
+        except Exception:
+            result["storage_used_gb"] = 0.0
+            result["storage_total_gb"] = 0.0
+            result["storage_pct"] = 0.0
+
         return result
 
     @staticmethod
@@ -338,14 +347,18 @@ class NotificationMonitor:
                 title_m = re.search(r"android\.title[^=]*=\s*([^\n]+)", block)
                 text_m = re.search(r"android\.text[^=]*=\s*([^\n]+)", block)
                 id_m = re.search(r"id=(\d+)", block)
+
                 pkg = pkg_m.group(1) if pkg_m else "unknown"
                 title = title_m.group(1).strip() if title_m else ""
                 text = text_m.group(1).strip() if text_m else ""
                 notif_id = id_m.group(1) if id_m else ""
+
                 if not title and not text:
                     continue
+
                 title = re.sub(r"\s+", " ", title)[:80]
                 text = re.sub(r"\s+", " ", text)[:120]
+
                 notifications.append({
                     "id": f"{pkg}_{notif_id}",
                     "package": pkg,
@@ -355,12 +368,14 @@ class NotificationMonitor:
                 })
             except Exception:
                 continue
+
         seen: set[str] = set()
         unique = []
         for n in notifications:
             if n["id"] not in seen:
                 seen.add(n["id"])
                 unique.append(n)
+
         return unique[:30]
 
     @classmethod
@@ -408,14 +423,18 @@ class MediaController:
 
     def _fetch_media_info(self) -> dict:
         result = {"title": "", "artist": "", "album": "", "playing": False, "package": ""}
+
         raw = adb_shell("dumpsys media_session 2>/dev/null", self._serial, timeout=7)
+
         if raw:
             sm = re.search(r"state=(\d+)", raw)
             if sm:
                 result["playing"] = int(sm.group(1)) == 3
+
             pm = re.search(r"package=(\S+)", raw)
             if pm:
                 result["package"] = pm.group(1)
+
             for meta_key, field in [("TITLE", "title"), ("ARTIST", "artist"), ("ALBUM", "album")]:
                 m = re.search(
                     rf"android\.media\.metadata\.{meta_key}\s*(?:\([^)]+\))?\s*[=:]\s*(.+)",
@@ -423,8 +442,10 @@ class MediaController:
                 )
                 if m:
                     val = m.group(1).strip().strip(",").strip()
-                    if val and val.lower() not in ("null", "none", "") and not val.startswith("size="):
+                    if val and val.lower() not in ("null", "none", "")\
+                            and not val.startswith("size="):
                         result[field] = val[:80]
+
         if not result["title"]:
             notif = adb_shell(
                 "dumpsys notification --noredact 2>/dev/null",
@@ -448,12 +469,14 @@ class MediaController:
                             result["artist"] = val[:60]
                     if result["title"]:
                         break
+
         if not result["title"] and raw:
             dm = re.search(r"\bdescription\s*=\s*([^\n,]+)", raw, re.IGNORECASE)
             if dm:
                 val = dm.group(1).strip()
                 if val and "null" not in val.lower() and not val.startswith("size="):
                     result["title"] = val[:80]
+
         return result
 
     def play_pause(self):
@@ -527,155 +550,94 @@ class PhoneController:
 
 class InputController:
 
-    _SYMBOL_KEYSYM = {
-        "!": "exclam",       "@": "at",            "#": "numbersign",
-        "$": "dollar",       "%": "percent",       "^": "asciicircum",
-        "&": "ampersand",    "*": "asterisk",      "(": "parenleft",
-        ")": "parenright",   "-": "minus",         "=": "equal",
-        "[": "bracketleft",  "]": "bracketright",  ";": "semicolon",
-        "'": "apostrophe",   ",": "comma",         ".": "period",
-        "/": "slash",        "\\": "backslash",    "`": "grave",
-        "~": "asciitilde",   "_": "underscore",    "+": "plus",
-        "{": "braceleft",    "}": "braceright",    ":": "colon",
-        '"': "quotedbl",     "<": "less",          ">": "greater",
-        "|": "bar",          " ": "space",
+    KEY_MAP = {
+        "Return": "Return",    "BackSpace": "BackSpace", "Tab": "Tab",
+        "Escape": "Escape",    "Delete": "Delete",       "space": "space",
+        "Home": "Home",        "End": "End",             "Prior": "Page_Up",
+        "Next": "Page_Down",   "Up": "Up",               "Down": "Down",
+        "Left": "Left",        "Right": "Right",
+        "F1": "F1",   "F2": "F2",   "F3": "F3",   "F4": "F4",
+        "F5": "F5",   "F6": "F6",   "F7": "F7",   "F8": "F8",
+        "F9": "F9",   "F10": "F10", "F11": "F11", "F12": "F12",
+        "ctrl": "ctrl", "shift": "shift", "alt": "alt", "super": "super",
+    }
+
+    MOD_MAP = {
+        "ctrl": "ctrl", "shift": "shift", "alt": "alt", "super": "super",
     }
 
     def __init__(self):
-        self._wdotool_path: Optional[str] = self._find_wdotool()
-        self._env: Optional[dict] = None
+        self._ready   = False
+        self._checked = False
+        self._bin     = "wdotool"
 
-    @staticmethod
-    def _find_wdotool() -> Optional[str]:
-        path = shutil.which("wdotool")
-        if path:
-            return path
-        for d in [os.path.expanduser("~/.cargo/bin"), os.path.expanduser("~/.local/bin")]:
-            candidate = os.path.join(d, "wdotool")
-            if os.path.isfile(candidate) and os.access(candidate, os.X_OK):
-                return candidate
+    def _find_wdotool(self) -> Optional[str]:
+        in_path = shutil.which("wdotool")
+        if in_path:
+            return in_path
+        candidates = [
+            os.path.expanduser("~/.cargo/bin/wdotool"),
+            "/usr/local/bin/wdotool",
+            "/usr/bin/wdotool",
+        ]
+        for c in candidates:
+            if os.path.isfile(c) and os.access(c, os.X_OK):
+                return c
         return None
 
-    def _make_env(self) -> dict:
-        if self._env is not None:
-            return self._env
-        env = os.environ.copy()
-        if not env.get("XDG_RUNTIME_DIR"):
-            env["XDG_RUNTIME_DIR"] = f"/run/user/{os.getuid()}"
-        if not env.get("DBUS_SESSION_BUS_ADDRESS"):
-            runtime = env.get("XDG_RUNTIME_DIR", "")
-            uid = os.getuid()
-            for c in [os.path.join(runtime, "bus"), f"unix:path=/run/user/{uid}/bus"]:
-                if os.path.exists(c):
-                    env["DBUS_SESSION_BUS_ADDRESS"] = f"unix:path={c}"
-                    break
-        if not env.get("WAYLAND_DISPLAY"):
-            runtime = env.get("XDG_RUNTIME_DIR", "")
-            if runtime:
-                matches = sorted(glob.glob(os.path.join(runtime, "wayland-*")))
-                if matches:
-                    env["WAYLAND_DISPLAY"] = os.path.basename(matches[0])
-        if not env.get("DISPLAY"):
-            env["DISPLAY"] = ":0"
-        self._env = env
-        return env
+    def _ensure_ready(self):
+        if self._checked:
+            return
+        self._checked = True
+        found = self._find_wdotool()
+        if not found:
+            print("[input] wdotool not found in PATH or ~/.cargo/bin/")
+            print("[input] Install via: cargo install wdotool")
+            return
+        self._bin = found
+        self._ready = True
+        print(f"[input] wdotool ready at {found}")
 
-    @property
-    def is_ready(self) -> bool:
-        return self._wdotool_path is not None
-
-    def _wdo(self, *args) -> bool:
-        if not self._wdotool_path:
-            print("[input] wdotool not found")
-            return False
+    def _wdo(self, *args):
+        self._ensure_ready()
+        if not self._ready:
+            return
         try:
-            r = subprocess.run(
-                [self._wdotool_path, "--backend", "libei", *args],
-                capture_output=True, text=True, timeout=10, env=self._make_env(),
+            subprocess.run(
+                [self._bin, *args],
+                capture_output=True, timeout=3
             )
-            if r.returncode != 0:
-                print(f"[input] wdotool {args[0]} failed: {r.stderr.strip()[:80]}")
-            return r.returncode == 0
-        except subprocess.TimeoutExpired:
-            print(f"[input] wdotool {args[0]} timed out")
-            return False
-        except Exception as e:
-            print(f"[input] wdotool error: {e}")
-            return False
+        except Exception as ex:
+            print(f"[wdotool] error: {ex}")
 
-    def _resolve_key(self, key: str) -> str:
-        return self._SYMBOL_KEYSYM.get(key, key)
+    def key_press(self, key: str):
+        parts    = key.lower().split("+")
+        mod_keys = [self.MOD_MAP.get(p, p) for p in parts[:-1]]
+        main     = parts[-1]
+        mapped   = self.KEY_MAP.get(main, main)
+        if mod_keys:
+            combo = "+".join(mod_keys + [mapped])
+        else:
+            combo = mapped
+        self._wdo("key", combo)
 
-    def key_press(self, key: str) -> bool:
-        resolved = self._resolve_combo(key)
-        if not resolved:
-            return False
-        return self._wdo("key", resolved)
+    def type_text(self, text: str):
+        self._wdo("type", "--", text)
 
-    def _resolve_combo(self, key: str) -> str:
-        if "+" not in key:
-            return self._resolve_key(key)
-        parts = key.split("+")
-        resolved = [self._resolve_key(p) for p in parts if p != ""]
-        return "+".join(resolved) if resolved else ""
+    def mouse_move(self, dx: int, dy: int):
+        self._wdo("mousemove_relative", "--", str(dx), str(dy))
 
-    def type_text(self, text: str) -> bool:
-        if not text:
-            return False
-        segment = ""
-        for ch in text:
-            if ch in ("\x08", "\x7f"):
-                if segment:
-                    if not self._wdo("type", "--", segment):
-                        return False
-                    segment = ""
-                if not self._wdo("key", "BackSpace"):
-                    return False
-            elif ch in ("\n", "\t") or ord(ch) >= 32:
-                segment += ch
-        if segment:
-            return self._wdo("type", "--", segment)
-        return True
-
-    def mouse_move(self, dx: int, dy: int) -> bool:
-        return self._wdo("mousemove_relative", "--", str(dx), str(dy))
-
-    def mouse_move_absolute(self, x: int, y: int) -> bool:
-        return self._wdo("mousemove_absolute", "--", str(x), str(y))
-
-    def mouse_click(self, button: str = "left") -> bool:
-        btn_map = {"left": "1", "middle": "2", "right": "3", "double_left": "1"}
-        raw = btn_map.get(button, button)
-        if button == "double_left":
-            return self._wdo("click", "--", raw) and self._wdo("click", "--", raw)
-        return self._wdo("click", "--", raw)
-
-    def mouse_scroll(self, direction: str = "down", amount: int = 1) -> bool:
-        btn = "4" if direction == "up" else "5"
-        ok = True
-        for _ in range(amount):
-            ok = self._wdo("click", "--", btn)
-            if not ok:
-                break
-        return ok
-
-    def mouse_button_down(self, button: str = "left") -> bool:
+    def mouse_click(self, button: str = "left"):
         btn_map = {"left": "1", "middle": "2", "right": "3"}
-        return self._wdo("mousedown", "--", btn_map.get(button, button))
+        self._wdo("click", btn_map.get(button, "1"))
 
-    def mouse_button_up(self, button: str = "left") -> bool:
-        btn_map = {"left": "1", "middle": "2", "right": "3"}
-        return self._wdo("mouseup", "--", btn_map.get(button, button))
+    def mouse_scroll(self, direction: str = "down"):
+        self._wdo("click", "4" if direction == "up" else "5")
 
-    def mouse_drag(self, x1: int, y1: int, x2: int, y2: int, button: str = "left") -> bool:
-        btn_map = {"left": "1", "middle": "2", "right": "3"}
-        raw = btn_map.get(button, button)
-        return (
-            self.mouse_move_absolute(x1, y1)
-            and self._wdo("mousedown", "--", raw)
-            and self.mouse_move_absolute(x2, y2)
-            and self._wdo("mouseup", "--", raw)
-        )
+    def reset_detection(self):
+        self._ready   = False
+        self._checked = False
+        print("[input] wdotool detection reset")
 
 
 class PersistentBash:
@@ -762,10 +724,7 @@ class PersistentBash:
         import select
         while time.time() < deadline:
             remaining = deadline - time.time()
-            try:
-                ready = select.select([master_fd], [], [], min(remaining, 0.05))[0]
-            except (ValueError, OSError):
-                break
+            ready = select.select([master_fd], [], [], min(remaining, 0.05))[0]
             if not ready:
                 continue
             try:
@@ -821,9 +780,8 @@ class ClipboardManager:
     def _detect_mode(self) -> str:
         if self._mode:
             return self._mode
-        env = self._make_env()
-        session = (env.get("XDG_SESSION_TYPE", "") or "").lower()
-        wayland = env.get("WAYLAND_DISPLAY", "")
+        session = (os.environ.get("XDG_SESSION_TYPE", "") or "").lower()
+        wayland = os.environ.get("WAYLAND_DISPLAY", "")
         if "wayland" in session or wayland:
             if subprocess.run(["which", "wl-copy"], capture_output=True).returncode == 0:
                 self._mode = "wayland"
@@ -857,7 +815,7 @@ class ClipboardManager:
                 r = subprocess.run(
                     ["wl-paste", "--no-newline"],
                     capture_output=True, timeout=2,
-                    env=self._make_env()
+                    env=os.environ.copy()
                 )
                 if r.returncode == 0:
                     return r.stdout.decode("utf-8", errors="replace").strip()
@@ -874,7 +832,7 @@ class ClipboardManager:
                     print(f"[clipboard] xclip error: {stderr[:80]}")
         except FileNotFoundError as e:
             tool = "wl-paste" if "wl-paste" in str(e) else "xclip"
-            print(f"[clipboard] {tool} not found -- install wl-clipboard or xclip")
+            print(f"[clipboard] {tool} not found — install wl-clipboard or xclip")
         except Exception as e:
             print(f"[clipboard] get error: {e}")
         return ""
@@ -887,7 +845,7 @@ class ClipboardManager:
                     ["wl-copy"],
                     input=text.encode("utf-8"),
                     capture_output=True, timeout=2,
-                    env=self._make_env()
+                    env=os.environ.copy()
                 )
                 if r.returncode == 0:
                     self._last = text
@@ -905,7 +863,7 @@ class ClipboardManager:
                     print(f"[clipboard] xclip error: {r.stderr.decode()[:60]}")
         except FileNotFoundError as e:
             tool = "wl-copy" if "wl-copy" in str(e) else "xclip"
-            print(f"[clipboard] {tool} not found -- install wl-clipboard or xclip")
+            print(f"[clipboard] {tool} not found — install wl-clipboard or xclip")
         except Exception as e:
             print(f"[clipboard] set error: {e}")
 
@@ -968,8 +926,6 @@ class TrustedDeviceStore:
         with self._lock:
             return list(self._trusted)
 
-_DEVICE_STALE_SECONDS = 10
-
 class YelenaDiscovery:
 
     UDP_PORT = 1716
@@ -1006,6 +962,7 @@ class YelenaDiscovery:
             self._send_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             self._send_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
             self._send_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
             self._recv_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             self._recv_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             try:
@@ -1015,11 +972,12 @@ class YelenaDiscovery:
             self._recv_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
             self._recv_sock.bind(("", self.UDP_PORT))
             self._recv_sock.settimeout(2.0)
+
             self._thread_send = threading.Thread(target=self._send_loop, daemon=True)
             self._thread_recv = threading.Thread(target=self._recv_loop, daemon=True)
             self._thread_send.start()
             self._thread_recv.start()
-            print(f"[udp] Discovery started -- listening on :{self.UDP_PORT}")
+            print(f"[udp] Discovery started — listening on :{self.UDP_PORT}")
         except Exception as e:
             print(f"[udp] Error: {e}")
             self._running = False
@@ -1055,26 +1013,7 @@ class YelenaDiscovery:
             except Exception as e:
                 if self._running:
                     print(f"[udp] send error: {e}")
-            self._prune_stale_devices()
             time.sleep(self.INTERVAL)
-
-    def _prune_stale_devices(self):
-        now = time.time()
-        lost = []
-        with self._devices_lock:
-            stale = [
-                ip for ip, dev in self._devices.items()
-                if now - dev.get("_last_seen", 0) > _DEVICE_STALE_SECONDS
-            ]
-            for ip in stale:
-                lost.append(self._devices.pop(ip))
-        for dev in lost:
-            print(f"[udp] DEVICE LOST: {dev['name']} @ {dev['ip']}")
-            for cb in self._on_lost_cbs:
-                try:
-                    cb(dev)
-                except Exception:
-                    pass
 
     def _recv_loop(self):
         print(f"[udp] Listening for broadcasts on :{self.UDP_PORT}")
@@ -1084,18 +1023,23 @@ class YelenaDiscovery:
                     break
                 data, addr = self._recv_sock.recvfrom(4096)
                 src_ip = addr[0]
+
                 print(f"[udp] Raw packet from {src_ip}: {data[:120]}")
+
                 try:
                     payload = json.loads(data.decode("utf-8"))
                 except Exception:
                     print(f"[udp] Failed to parse JSON from {src_ip}")
                     continue
+
                 if payload.get("type") != "yelena":
                     print(f"[udp] Ignoring packet (type={payload.get('type')}) from {src_ip}")
                     continue
+
                 if payload.get("role") == "pc":
                     print(f"[udp] Ignoring packet from another PC: {src_ip}")
                     continue
+
                 device = {
                     "name": payload.get("name", src_ip),
                     "ip": src_ip,
@@ -1103,11 +1047,12 @@ class YelenaDiscovery:
                     "os": payload.get("os", "Android"),
                     "manufacturer": payload.get("manufacturer", ""),
                     "type": "wifi",
-                    "_last_seen": time.time(),
                 }
+
                 with self._devices_lock:
                     is_new = src_ip not in self._devices
                     self._devices[src_ip] = device
+
                 if is_new:
                     print(f"[udp] DEVICE FOUND: {device['name']} @ {src_ip}")
                     for cb in self._on_found_cbs:
@@ -1115,6 +1060,7 @@ class YelenaDiscovery:
                             cb(device)
                         except Exception:
                             pass
+
             except socket.timeout:
                 continue
             except Exception as e:
@@ -1131,6 +1077,7 @@ class YelenaWebSocketServer:
     WS_PORT = 8765
 
     def __init__(self, conn_manager: "ConnectionManager"):
+
         self._mgr = conn_manager
         self._clients: set = set()
         self._loop: Optional[asyncio.AbstractEventLoop] = None
@@ -1138,16 +1085,20 @@ class YelenaWebSocketServer:
         self._running = False
         self._last_wifi_rssi: int = -1
         self._start_time = time.time()
+
         self._client_info: dict[str, dict] = {}
         self._client_info_lock = threading.Lock()
+
         self._trusted_store = TrustedDeviceStore()
         self._on_pair_request_cbs: list[Callable] = []
         self._on_pair_accepted_cbs: list[Callable] = []
         self._on_pair_rejected_cbs: list[Callable] = []
         self._on_disconnect_cbs: list[Callable] = []
+
         self._input = InputController()
         self._clipboard = ClipboardManager()
         self._bash = PersistentBash()
+
         self._handlers: dict[str, Callable] = {
             "ping":                  self._h_ping,
             "pair_response":         self._h_pair_response,
@@ -1179,15 +1130,14 @@ class YelenaWebSocketServer:
             "battery":               self._h_battery,
             "presentation":          self._h_presentation,
             "get_clipboard_history": self._h_clipboard_history,
-            "mouse_drag":            self._h_mouse_drag,
-            "mouse_button":          self._h_mouse_button,
-            "input_status":          self._h_input_status,
         }
 
     def on_pair_request(self, cb: Callable):
+
         self._on_pair_request_cbs.append(cb)
 
     def on_pair_accepted(self, cb: Callable):
+
         self._on_pair_accepted_cbs.append(cb)
 
     def on_pair_rejected(self, cb: Callable):
@@ -1197,19 +1147,23 @@ class YelenaWebSocketServer:
         self._on_disconnect_cbs.append(cb)
 
     def accept_pair(self, ip: str, trust: bool = True):
+
         with self._client_info_lock:
             info = self._client_info.get(ip)
-            if not info or info["state"] not in (_CLIENT_PENDING, _CLIENT_UNPAIRED):
+            if not info or info["state"] != _CLIENT_PENDING:
                 return
             info["state"] = _CLIENT_PAIRED
             ws = info["ws"]
             device_info = info["info"]
+
         if trust:
             fp = self._fingerprint(ip, device_info)
             self._trusted_store.trust(fp)
+
         asyncio.run_coroutine_threadsafe(
             self._accept_and_init(ws, trust), self._loop
         )
+
         for cb in self._on_pair_accepted_cbs:
             try:
                 cb(device_info)
@@ -1217,12 +1171,15 @@ class YelenaWebSocketServer:
                 pass
 
     def reject_pair(self, ip: str):
+
         with self._client_info_lock:
             info = self._client_info.get(ip)
             if not info:
                 return
             ws = info["ws"]
+
         asyncio.run_coroutine_threadsafe(self._reject_and_close(ws, ip), self._loop)
+
         for cb in self._on_pair_rejected_cbs:
             try:
                 cb(ip)
@@ -1238,6 +1195,7 @@ class YelenaWebSocketServer:
             pass
 
     def untrust_device(self, ip: str, device_info: dict):
+
         fp = self._fingerprint(ip, device_info)
         self._trusted_store.untrust(fp)
 
@@ -1290,16 +1248,16 @@ class YelenaWebSocketServer:
             max_size=None,
         ):
             print(f"[ws] Listening on ws://0.0.0.0:{self.WS_PORT}")
-            asyncio.create_task(self._resource_loop())
-            asyncio.create_task(self._clipboard_loop())
-            asyncio.create_task(self._media_loop())
+            loop = asyncio.get_event_loop()
+            loop.create_task(self._resource_loop())
+            loop.create_task(self._clipboard_loop())
+            loop.create_task(self._media_loop())
             while self._running:
                 await asyncio.sleep(1)
 
     async def _resource_loop(self):
-        loop = asyncio.get_running_loop()
+        loop = asyncio.get_event_loop()
         _tick = 0
-        _cache_tick = 0
         _last_disk = None
         _last_boot = None
         while self._running:
@@ -1309,19 +1267,18 @@ class YelenaWebSocketServer:
                 if _tick % 30 == 0:
                     _last_disk = (data.get("diskUsedGb"), data.get("diskTotalGb"), data.get("diskPercent"))
                     _last_boot = data.get("uptimeSeconds")
-                    _cache_tick = _tick
                 elif _last_disk is not None:
                     data["diskUsedGb"]    = _last_disk[0]
                     data["diskTotalGb"]   = _last_disk[1]
                     data["diskPercent"]   = _last_disk[2]
-                    data["uptimeSeconds"] = _last_boot + (_tick - _cache_tick) * 2
+                    data["uptimeSeconds"] = _last_boot + _tick
                 await self._broadcast_to("resources", data, paired)
                 self._mgr.on_resources_update(data)
             _tick += 1
             await asyncio.sleep(2)
 
     async def _media_loop(self):
-        loop = asyncio.get_running_loop()
+        loop = asyncio.get_event_loop()
         _last = None
         while self._running:
             paired = self._get_paired_websockets()
@@ -1330,7 +1287,7 @@ class YelenaWebSocketServer:
                 if data:
                     snapshot = (data.get("title",""), data.get("artist",""),
                                 data.get("album",""), data.get("playing", False))
-                    if snapshot != _last and any(snapshot[:3]):
+                    if snapshot != _last:
                         _last = snapshot
                         await self._broadcast_to("pc_media", {
                             "title":   snapshot[0],
@@ -1339,7 +1296,6 @@ class YelenaWebSocketServer:
                             "playing": snapshot[3],
                         }, paired)
             await asyncio.sleep(2)
-
     async def _clipboard_loop(self):
         while self._running:
             paired = self._get_paired_websockets()
@@ -1359,16 +1315,19 @@ class YelenaWebSocketServer:
             }
 
     async def _handle_client(self, websocket, path=None):
-        if path is not None and path not in ("/ws", "/"):
+        if path is not None and path != "/ws":
             await websocket.close(1008, "Invalid path")
             return
         ip = websocket.remote_address[0] if websocket.remote_address else "?"
-        print(f"[ws] NEW CONNECTION ATTEMPT from {ip}")
+
+        print(f"[ws] 🔌 NEW CONNECTION ATTEMPT from {ip}")
+
         device_name = ip
         if hasattr(self._mgr, 'discovery') and self._mgr.discovery:
             with self._mgr.discovery._devices_lock:
                 if ip in self._mgr.discovery._devices:
                     device_name = self._mgr.discovery._devices[ip].get("name", ip)
+
         discovered = {}
         if hasattr(self._mgr, 'discovery') and self._mgr.discovery:
             with self._mgr.discovery._devices_lock:
@@ -1383,7 +1342,9 @@ class YelenaWebSocketServer:
         }
         fingerprint = self._fingerprint(ip, device_info)
         is_trusted = self._trusted_store.is_trusted(fingerprint)
+
         state = _CLIENT_PAIRED if is_trusted else _CLIENT_UNPAIRED
+
         self._clients.add(websocket)
         with self._client_info_lock:
             self._client_info[ip] = {
@@ -1391,18 +1352,23 @@ class YelenaWebSocketServer:
                 "state": state,
                 "info": device_info,
             }
+
         print(f"[ws] Client connected: {device_name} @ {ip} (trusted={is_trusted})")
+
         try:
             await self._send(websocket, "pc_info", self._pc_info())
+
             if state == _CLIENT_PAIRED:
                 await self._send(websocket, "pair_accepted", {"trusted": True})
+
                 for cb in self._on_pair_accepted_cbs:
                     try:
                         cb(device_info)
                     except Exception as e:
                         print(f"[ws] Error in on_pair_accepted callback: {e}")
+
                 try:
-                    loop = asyncio.get_running_loop()
+                    loop = asyncio.get_event_loop()
                     res = await loop.run_in_executor(None, self._get_pc_resources)
                     await self._send(websocket, "resources", res)
                     media = await loop.run_in_executor(None, self._mgr.media.get_current)
@@ -1421,6 +1387,7 @@ class YelenaWebSocketServer:
                         await self._send(websocket, "clipboard", {"text": clip})
                 except Exception as e:
                     print(f"[ws] Error sending initial state to {ip}: {e}")
+
             else:
                 with self._client_info_lock:
                     self._client_info[ip]["state"] = _CLIENT_PENDING
@@ -1433,8 +1400,10 @@ class YelenaWebSocketServer:
                         cb(ip, device_info.get("name", ip))
                     except Exception:
                         pass
+
             async for raw in websocket:
                 await self._handle_message(websocket, ip, raw)
+
         except websockets.exceptions.ConnectionClosed:
             pass
         except Exception as e:
@@ -1458,7 +1427,7 @@ class YelenaWebSocketServer:
             await self._send(ws, "pc_info", self._pc_info())
             if ws.closed:
                 return
-            loop = asyncio.get_running_loop()
+            loop = asyncio.get_event_loop()
             res = await loop.run_in_executor(None, self._get_pc_resources)
             if ws.closed:
                 return
@@ -1466,6 +1435,10 @@ class YelenaWebSocketServer:
             if ws.closed:
                 return
             media = await loop.run_in_executor(None, self._mgr.media.get_current)
+            phone_notifs = self._mgr.get_phone_notifications()
+            if phone_notifs and not ws.closed:
+                await self._send(ws, "phone_notifications", phone_notifs)
+
             if media and not ws.closed:
                 await self._send(ws, "pc_media", {
                     "title":   media.get("title",   ""),
@@ -1484,7 +1457,7 @@ class YelenaWebSocketServer:
 
     async def _send_initial_state(self, ws):
         await self._send(ws, "pc_info", self._pc_info())
-        loop = asyncio.get_running_loop()
+        loop = asyncio.get_event_loop()
         res = await loop.run_in_executor(None, self._get_pc_resources)
         await self._send(ws, "resources", res)
         clip = self._clipboard.get()
@@ -1496,6 +1469,7 @@ class YelenaWebSocketServer:
             msg = json.loads(raw)
             mtype = msg.get("type", "")
             payload = msg.get("payload", {})
+
             if isinstance(payload, str) and payload:
                 try:
                     payload = json.loads(payload)
@@ -1503,15 +1477,19 @@ class YelenaWebSocketServer:
                     pass
             if not isinstance(payload, dict):
                 payload = {"value": payload}
+
         except Exception as e:
             print(f"[ws] Parse error from {ip}: {e}")
             return
+
         with self._client_info_lock:
             info = self._client_info.get(ip)
             client_state = info["state"] if info else _CLIENT_UNPAIRED
+
         if client_state != _CLIENT_PAIRED and mtype not in ("ping", "pair_response"):
             print(f"[ws] Ignoring '{mtype}' from unpaired client {ip}")
             return
+
         handler = self._handlers.get(mtype)
         if handler:
             try:
@@ -1526,6 +1504,11 @@ class YelenaWebSocketServer:
 
     async def _h_pair_response(self, ws, ip: str, payload: dict):
         accepted = payload.get("accepted", False)
+        with self._client_info_lock:
+            info = self._client_info.get(ip)
+            if not info:
+                return
+            info["state"] = _CLIENT_PENDING
         if accepted:
             self.accept_pair(ip, trust=True)
         else:
@@ -1602,7 +1585,7 @@ class YelenaWebSocketServer:
         cmd = payload.get("command", "")
         if not cmd:
             return
-        loop = asyncio.get_running_loop()
+        loop = asyncio.get_event_loop()
         out, code = await loop.run_in_executor(None, lambda: self._bash.run(cmd))
         await self._send(ws, "terminal_output", {"output": out, "exitCode": code})
 
@@ -1644,8 +1627,9 @@ class YelenaWebSocketServer:
             self._mgr.on_file_reject_update(tid)
 
     async def _h_get_processes(self, ws, ip: str, payload: dict):
-        loop = asyncio.get_running_loop()
-        procs = await loop.run_in_executor(None, self._get_processes)
+        procs = await asyncio.get_event_loop().run_in_executor(
+            None, self._get_processes
+        )
         await self._send(ws, "processes", procs)
 
     async def _h_kill_process(self, ws, ip: str, payload: dict):
@@ -1655,8 +1639,7 @@ class YelenaWebSocketServer:
             await self._send(ws, "process_killed", {"pid": pid, "ok": result})
 
     async def _h_get_apps(self, ws, ip: str, payload: dict):
-        loop = asyncio.get_running_loop()
-        apps = await loop.run_in_executor(None, self._get_apps)
+        apps = await asyncio.get_event_loop().run_in_executor(None, self._get_apps)
         await self._send(ws, "apps", apps)
 
     async def _h_launch_app(self, ws, ip: str, payload: dict):
@@ -1667,60 +1650,25 @@ class YelenaWebSocketServer:
     async def _h_mouse_move(self, ws, ip: str, payload: dict):
         dx = int(payload.get("dx", 0))
         dy = int(payload.get("dy", 0))
-        loop = asyncio.get_running_loop()
-        await loop.run_in_executor(None, self._input.mouse_move, dx, dy)
+        self._input.mouse_move(dx, dy)
 
     async def _h_mouse_click(self, ws, ip: str, payload: dict):
         btn = payload.get("button", "left")
-        loop = asyncio.get_running_loop()
-        await loop.run_in_executor(None, self._input.mouse_click, btn)
+        self._input.mouse_click(btn)
 
     async def _h_mouse_scroll(self, ws, ip: str, payload: dict):
         direction = payload.get("direction", "down")
-        amount = int(payload.get("amount", 1))
-        loop = asyncio.get_running_loop()
-        await loop.run_in_executor(None, self._input.mouse_scroll, direction, amount)
+        self._input.mouse_scroll(direction)
 
     async def _h_key_press(self, ws, ip: str, payload: dict):
         key = payload.get("key", "")
         if key:
-            loop = asyncio.get_running_loop()
-            ok = await loop.run_in_executor(None, self._input.key_press, key)
-            if not ok:
-                print(f"[input] key_press '{key}' failed")
+            self._input.key_press(key)
 
     async def _h_type_text(self, ws, ip: str, payload: dict):
         text = payload.get("text", "")
         if text:
-            loop = asyncio.get_running_loop()
-            await loop.run_in_executor(None, self._input.type_text, text)
-
-    async def _h_mouse_drag(self, ws, ip: str, payload: dict):
-        x1 = int(payload.get("x1", 0))
-        y1 = int(payload.get("y1", 0))
-        x2 = int(payload.get("x2", 0))
-        y2 = int(payload.get("y2", 0))
-        btn = payload.get("button", "left")
-        loop = asyncio.get_running_loop()
-        await loop.run_in_executor(None, self._input.mouse_drag, x1, y1, x2, y2, btn)
-
-    async def _h_mouse_button(self, ws, ip: str, payload: dict):
-        action = payload.get("action", "")
-        btn = payload.get("button", "left")
-        if action == "down":
-            fn = self._input.mouse_button_down
-        elif action == "up":
-            fn = self._input.mouse_button_up
-        else:
-            return
-        loop = asyncio.get_running_loop()
-        await loop.run_in_executor(None, fn, btn)
-
-    async def _h_input_status(self, ws, ip: str, payload: dict):
-        await self._send(ws, "input_status", {
-            "backend": "wdotool" if self._input.is_ready else "none",
-            "ready": self._input.is_ready,
-        })
+            self._input.type_text(text)
 
     async def _h_set_brightness(self, ws, ip: str, payload: dict):
         val = int(payload.get("value", 50))
@@ -1742,19 +1690,34 @@ class YelenaWebSocketServer:
 
     async def _h_send_notification(self, ws, ip: str, payload: dict):
         title = payload.get("title", "")
-        body = payload.get("body", "")
+        body  = payload.get("text", payload.get("body", ""))
+        app   = payload.get("app", payload.get("pkg", ""))
+        nid   = payload.get("id", "")
+        notif = {"id": nid, "app": app, "title": title, "body": body, "time": int(time.time() * 1000)}
+        self._mgr.add_phone_notification(notif)
         self._desktop_notify(title, body)
 
     async def _h_presentation(self, ws, ip: str, payload: dict):
         action = payload.get("action", "")
         key_map = {
-            "next": "Right", "prev": "Left", "start": "F5",
-            "end": "Escape", "black": "b", "white": "w",
+            "next":  "Right",
+            "prev":  "Left",
+            "start": "F5",
+            "end":   "Escape",
+            "black": "b",
+            "white": "w",
         }
-        key = key_map.get(action)
-        if key:
-            loop = asyncio.get_running_loop()
-            await loop.run_in_executor(None, self._input.key_press, key)
+        if action.startswith("goto:"):
+            try:
+                num = int(action.split(":")[1])
+                for _ in range(num):
+                    self._input.key_press("Return")
+            except ValueError:
+                pass
+        else:
+            key = key_map.get(action)
+            if key:
+                self._input.key_press(key)
 
     async def _h_clipboard_history(self, ws, ip: str, payload: dict):
         await self._send(ws, "clipboard_history", {
@@ -1762,6 +1725,7 @@ class YelenaWebSocketServer:
         })
 
     def broadcast(self, mtype: str, payload):
+
         self._broadcast(mtype, payload)
 
     def broadcast_media(self, data: dict):
@@ -1777,6 +1741,7 @@ class YelenaWebSocketServer:
         self._broadcast("phone_media", payload)
 
     def broadcast_notifications(self, notifs: list):
+        self._mgr.on_phone_notifs_update(notifs)
         self._broadcast("phone_notifications", [
             {
                 "id": n.get("id", ""),
@@ -1998,11 +1963,13 @@ class ConnectionManager:
         self.serial: Optional[str] = None
         self.device_name: str = "No device"
         self.device_type: str = "none"
+
         self.scrcpy = ScrcpySession()
         self.resources = ResourceMonitor()
         self.notifications = NotificationMonitor()
         self.media = MediaController()
         self.phone = PhoneController()
+
         self._on_battery_cbs: list[Callable] = []
         self._on_rssi_cbs: list[Callable] = []
         self._on_resources_cbs: list[Callable] = []
@@ -2011,12 +1978,17 @@ class ConnectionManager:
         self._on_accent_color_cbs: list[Callable] = []
         self._on_file_accept_cbs: list[Callable] = []
         self._on_file_reject_cbs: list[Callable] = []
+        self._on_phone_notif_cbs: list[Callable] = []
+        self._phone_notifs: list[dict] = []
         self.ws_server = YelenaWebSocketServer(self)
         self.discovery = YelenaDiscovery(ws_port=YelenaWebSocketServer.WS_PORT)
+
         self._on_connect_cbs: list[Callable] = []
         self._on_disconnect_cbs: list[Callable] = []
+
         self.notifications.add_callback(self.ws_server.broadcast_notifications)
         self.media.add_callback(self.ws_server.broadcast_media)
+
         self.ws_server.start()
         self.discovery.start()
 
@@ -2031,13 +2003,16 @@ class ConnectionManager:
         self.serial = device["serial"]
         self.device_name = device["name"]
         self.device_type = device["type"]
+
         self.resources.set_serial(self.serial)
         self.notifications.set_serial(self.serial)
         self.media.set_serial(self.serial)
         self.phone.set_serial(self.serial)
+
         self.resources.start()
         self.notifications.start()
         self.media.start()
+
         for cb in self._on_connect_cbs:
             try:
                 cb(device)
@@ -2153,6 +2128,26 @@ class ConnectionManager:
 
     def on_file_reject_changed(self, cb: Callable):
         self._on_file_reject_cbs.append(cb)
+
+    def add_phone_notification(self, notif: dict):
+        self._phone_notifs = [n for n in self._phone_notifs if n.get("id") != notif.get("id")]
+        self._phone_notifs.insert(0, notif)
+        if len(self._phone_notifs) > 50:
+            self._phone_notifs = self._phone_notifs[:50]
+        self.on_phone_notifs_update(self._phone_notifs)
+
+    def get_phone_notifications(self) -> list:
+        return self._phone_notifs.copy()
+
+    def on_phone_notifs_update(self, notifs: list):
+        for cb in self._on_phone_notif_cbs:
+            try:
+                cb(notifs)
+            except Exception:
+                pass
+
+    def on_phone_notifs_changed(self, cb: Callable):
+        self._on_phone_notif_cbs.append(cb)
 
     def on_phone_volume_update(self, level: int):
         for cb in self._on_phone_volume_cbs:
