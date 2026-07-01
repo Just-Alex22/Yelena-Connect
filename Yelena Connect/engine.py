@@ -1693,7 +1693,9 @@ class YelenaWebSocketServer:
         body  = payload.get("text", payload.get("body", ""))
         app   = payload.get("app", payload.get("pkg", ""))
         nid   = payload.get("id", "")
-        notif = {"id": nid, "app": app, "title": title, "body": body, "time": int(time.time() * 1000)}
+        import datetime as _dt
+        notif = {"id": nid, "app": app, "title": title, "body": body,
+                 "time": _dt.datetime.now().strftime("%H:%M")}
         self._mgr.add_phone_notification(notif)
         self._desktop_notify(title, body)
 
@@ -1748,7 +1750,7 @@ class YelenaWebSocketServer:
                 "app": n.get("app", ""),
                 "title": n.get("title", ""),
                 "body": n.get("text", ""),
-                "time": int(time.time() * 1000),
+                "time": __import__("datetime").datetime.now().strftime("%H:%M"),
             }
             for n in notifs
         ])

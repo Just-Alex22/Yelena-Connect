@@ -1081,13 +1081,9 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   void initState() {
     super.initState();
-    widget.backend.start();
     widget.backend.addListener(_onBackendChange);
     langMgr.addListener(_onLangChange);
-
-    Future.delayed(const Duration(seconds: 1), () {
-      if (widget.backend.ready) widget.backend.requestQrText();
-    });
+    widget.backend.start();
   }
 
   @override
@@ -1106,6 +1102,11 @@ class _DashboardPageState extends State<DashboardPage> {
     setState(() {});
 
     final b = widget.backend;
+
+    if (b.ready && b.qrText.isEmpty) {
+      b.requestQrText();
+    }
+
     if (b.pairIp.isNotEmpty && !_pairDialogOpen) {
       _pairDialogOpen = true;
       Future.delayed(Duration.zero, () {
