@@ -598,17 +598,30 @@ class InputController:
         self._ready = True
         print(f"[input] wdotool ready at {found}")
 
-    def _wdo(self, *args):
+    def _wdo(self, *args, timeout: int = 30):
         self._ensure_ready()
         if not self._ready:
+            print(f"[wdotool] not ready, skipping: {args}")
             return
+        cmd = [self._bin, *args]
+        print(f"[wdotool] running: {cmd}")
         try:
-            subprocess.run(
-                [self._bin, *args],
-                capture_output=True, timeout=3
-            )
+            r = subprocess.run(cmd, capture_output=True, timeout=timeout)
+            if r.returncode != 0:
+                print(f"[wdotool] exit {r.returncode}: {r.stderr.decode(errors='replace').strip()}")
+            else:
+                print(f"[wdotool] OK: {cmd}")
+        except subprocess.TimeoutExpired:
+            print(f"[wdotool] TIMEOUT after {timeout}s: {cmd}")
         except Exception as ex:
-            print(f"[wdotool] error: {ex}")
+            print(f"[wdotool] EXCEPTION: {ex}")
+
+    def _wdo_bg(self, *args, timeout: int = 30):
+        threading.Thread(
+            target=self._wdo, args=args,
+            kwargs={"timeout": timeout},
+            daemon=True
+        ).start()
 
     def key_press(self, key: str):
         parts    = key.lower().split("+")
@@ -619,20 +632,22 @@ class InputController:
             combo = "+".join(mod_keys + [mapped])
         else:
             combo = mapped
-        self._wdo("key", combo)
+        print(f"[wdotool] key_press: '{key}' -> '{combo}'")
+        self._wdo_bg("key", combo)
 
     def type_text(self, text: str):
-        self._wdo("type", "--", text)
+        print(f"[wdotool] type_text called with {len(text)} chars: {repr(text[:40])}")
+        self._wdo_bg("type", "--", text, timeout=60)
 
     def mouse_move(self, dx: int, dy: int):
-        self._wdo("mousemove_relative", "--", str(dx), str(dy))
+        self._wdo_bg("mousemove_relative", "--", str(dx), str(dy))
 
     def mouse_click(self, button: str = "left"):
         btn_map = {"left": "1", "middle": "2", "right": "3"}
-        self._wdo("click", btn_map.get(button, "1"))
+        self._wdo_bg("click", btn_map.get(button, "1"))
 
     def mouse_scroll(self, direction: str = "down"):
-        self._wdo("click", "4" if direction == "up" else "5")
+        self._wdo_bg("click", "4" if direction == "up" else "5")
 
     def reset_detection(self):
         self._ready   = False
