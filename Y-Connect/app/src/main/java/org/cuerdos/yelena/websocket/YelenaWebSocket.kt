@@ -1,5 +1,4 @@
 package org.cuerdos.yelena.websocket
-
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.ContentValues
@@ -19,22 +18,17 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.cuerdos.yelena.model.*
 import java.io.File
-
 sealed class ConnectionState {
     object Disconnected : ConnectionState()
     object Connecting   : ConnectionState()
     data class Connected(val pcInfo: PcInfo) : ConnectionState()
     data class Error(val message: String)    : ConnectionState()
 }
-
 object YelenaWebSocket {
-
     const val WS_PORT = 8765
     private const val TAG = "YelenaWS"
-
     private val json   = Json { ignoreUnknownKeys = true }
     private val client = HttpClient(CIO) { install(WebSockets) { maxFrameSize = Long.MAX_VALUE } }
-
     val connectionState    = MutableStateFlow<ConnectionState>(ConnectionState.Disconnected)
     val pcResources        = MutableStateFlow(PcResources())
     val pcMedia            = MutableStateFlow(PcMedia())
@@ -49,7 +43,6 @@ object YelenaWebSocket {
     val processes          = MutableStateFlow<List<Map<String, Any>>>(emptyList())
     val apps               = MutableStateFlow<List<Map<String, String>>>(emptyList())
     val clipboardHistory   = MutableStateFlow<List<String>>(emptyList())
-
     private val chunkBuffer = mutableMapOf<String, MutableList<Pair<Int, String>>>()
     var lastBatteryPct    = -1
         internal set
@@ -58,21 +51,16 @@ object YelenaWebSocket {
     var lastRssi          = Int.MIN_VALUE
         internal set
     private val chunkMeta = mutableMapOf<String, Triple<String, Int, Boolean>>()
-
     @Volatile private var ignoreNextClipChange = false
     var onClipboardFromPc: (() -> Unit)? = null
-
     private var session    : DefaultWebSocketSession? = null
     private var connectJob : Job? = null
     private val scope      = CoroutineScope(Dispatchers.IO + SupervisorJob())
-
     var appContext: Context? = null
-
     var lastIp   = ""
         private set
     var lastPort = WS_PORT
         private set
-
     fun connect(ip: String, port: Int) {
         lastIp   = ip
         lastPort = port
@@ -96,7 +84,6 @@ object YelenaWebSocket {
             }
         }
     }
-
     fun disconnect() {
         lastIp   = ""
         lastPort = WS_PORT
@@ -118,20 +105,16 @@ object YelenaWebSocket {
         lastBatteryCharge = false
         lastRssi          = Int.MIN_VALUE
     }
-
     fun isConnected()             = connectionState.value is ConnectionState.Connected
     fun isConnectedOrConnecting() = connectionState.value is ConnectionState.Connected
                                  || connectionState.value is ConnectionState.Connecting
-
     private fun sendJson(type: String, payload: String) = send(WsMessage(type, payload))
-
     private fun send(msg: WsMessage) {
         scope.launch {
             try { session?.send(Frame.Text(json.encodeToString(msg))) }
             catch (e: Exception) { Log.e(TAG, "Send error: ${e.message}") }
         }
     }
-
     fun sendMediaCommand(action: String)       = sendJson("media_command",         """{"action":"$action"}""")
     fun sendTerminalCommand(cmd: String)       = sendJson("terminal",              """{"command":${json.encodeToString(cmd)}}""")
     fun sendTerminalInput(text: String)        = sendJson("terminal_input",        """{"text":${json.encodeToString(text)}}""")
@@ -152,12 +135,10 @@ object YelenaWebSocket {
     fun sendAccentColor(hex: String)           = sendJson("accent_color",          """{"hex":${json.encodeToString(hex)}}""")
     fun sendFileAccept(tid: String)            = sendJson("file_accept",           """{"transfer_id":"$tid"}""")
     fun sendFileReject(tid: String)            = sendJson("file_reject",           """{"transfer_id":"$tid"}""")
-
     fun sendWifiSignal(rssi: Int) {
         if (session != null) lastRssi = rssi
         sendJson("wifi_signal", """{"rssi":$rssi}""")
     }
-
     fun sendBattery(pct: Int, charging: Boolean) {
         if (session != null) {
             lastBatteryPct    = pct
@@ -165,7 +146,6 @@ object YelenaWebSocket {
         }
         sendJson("battery", """{"pct":$pct,"charging":$charging}""")
     }
-
     fun sendPhoneMedia(title: String, artist: String, playing: Boolean, artworkBase64: String? = null) {
         val payload = buildString {
             append("""{"title":${json.encodeToString(title)}""")
@@ -176,12 +156,10 @@ object YelenaWebSocket {
         }
         sendJson("phone_media", payload)
     }
-
     fun sendNotification(id: String, pkg: String, title: String, text: String) =
         sendJson("send_notification", json.encodeToString(mapOf(
             "id" to id, "app" to pkg, "title" to title, "text" to text,
         )))
-
     private fun handleMessage(raw: String) {
         try {
             val msg = json.decodeFromString<WsMessage>(raw)
@@ -233,14 +211,12 @@ object YelenaWebSocket {
             Log.e(TAG, "Parse error: ${e.message}")
         }
     }
-
     private fun dispatchMediaKey(keyCode: Int) {
         val ctx = appContext ?: return
         val am  = ctx.getSystemService(Context.AUDIO_SERVICE) as android.media.AudioManager
         am.dispatchMediaKeyEvent(android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN, keyCode))
         am.dispatchMediaKeyEvent(android.view.KeyEvent(android.view.KeyEvent.ACTION_UP,   keyCode))
     }
-
     private fun handlePhoneMediaCommand(action: String) {
         scope.launch {
             try {
@@ -260,17 +236,21 @@ object YelenaWebSocket {
                         am.adjustStreamVolume(android.media.AudioManager.STREAM_MUSIC, android.media.AudioManager.ADJUST_LOWER, 0)
                         sendPhoneVolume(am)
                     }
+                    "vol_mute"   -> {
+                        val ctx = appContext ?: return@launch
+                        val am  = ctx.getSystemService(Context.AUDIO_SERVICE) as android.media.AudioManager
+                        am.adjustStreamVolume(android.media.AudioManager.STREAM_MUSIC, android.media.AudioManager.ADJUST_TOGGLE_MUTE, 0)
+                        sendPhoneVolume(am)
+                    }
                 }
             } catch (e: Exception) { Log.e(TAG, "phone_media_command: ${e.message}") }
         }
     }
-
     private fun sendPhoneVolume(am: android.media.AudioManager) {
         val cur = am.getStreamVolume(android.media.AudioManager.STREAM_MUSIC)
         val max = am.getStreamMaxVolume(android.media.AudioManager.STREAM_MUSIC)
         sendJson("phone_volume", """{"level":${if (max > 0) cur * 100 / max else 0}}""")
     }
-
     private fun handlePairRequest() {
         scope.launch {
             try {
@@ -280,7 +260,6 @@ object YelenaWebSocket {
             } catch (e: Exception) { Log.e(TAG, "pair_response: ${e.message}") }
         }
     }
-
     private fun handleClipboardFromPc(payload: String) {
         try {
             val text = org.json.JSONObject(payload).optString("text").takeIf { it.isNotEmpty() } ?: return
@@ -294,11 +273,9 @@ object YelenaWebSocket {
             }
         } catch (e: Exception) { Log.e(TAG, "clipboard: ${e.message}") }
     }
-
     fun shouldIgnoreNextClipChange(): Boolean {
         return if (ignoreNextClipChange) { ignoreNextClipChange = false; true } else false
     }
-
     private fun handleFileOffer(payload: String) {
         try {
             val obj = org.json.JSONObject(payload)
@@ -313,7 +290,6 @@ object YelenaWebSocket {
             )
         } catch (e: Exception) { Log.e(TAG, "file_offer: ${e.message}") }
     }
-
     private fun handleFileChunk(payload: String) {
         scope.launch(Dispatchers.IO) {
             try {
@@ -327,19 +303,15 @@ object YelenaWebSocket {
                 val origName    = obj.optString("original_name", name)
                 val data        = obj.optString("data", "")
                 if (data.isEmpty()) return@launch
-
                 val chunks = chunkBuffer.getOrPut(tid) { mutableListOf() }
                 chunks.add(Pair(chunkIndex, data))
                 chunkMeta[tid] = Triple(origName, totalChunks, compressed)
-
                 if (!isLast && chunks.size < totalChunks) return@launch
-
                 val meta      = chunkMeta.remove(tid) ?: Triple(origName, totalChunks, compressed)
                 val allChunks = chunkBuffer.remove(tid) ?: chunks
                 val b64       = allChunks.sortedBy { it.first }.joinToString("") { it.second }
                 var assembled = Base64.decode(b64, Base64.DEFAULT)
                 var finalName = meta.first
-
                 if (meta.third) {
                     try {
                         val zis   = java.util.zip.ZipInputStream(java.io.ByteArrayInputStream(assembled))
@@ -351,7 +323,6 @@ object YelenaWebSocket {
                         zis.close()
                     } catch (_: Exception) {}
                 }
-
                 val ctx = appContext ?: return@launch
                 val path: String
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -377,7 +348,6 @@ object YelenaWebSocket {
             } catch (e: Exception) { Log.e(TAG, "file_chunk: ${e.message}") }
         }
     }
-
     private fun handleFileFromPc(payload: String) {
         scope.launch(Dispatchers.IO) {
             try {
@@ -410,7 +380,6 @@ object YelenaWebSocket {
             } catch (e: Exception) { Log.e(TAG, "file_send: ${e.message}") }
         }
     }
-
     private fun handleProcesses(payload: String) {
         try {
             val arr = org.json.JSONArray(payload)
@@ -425,7 +394,6 @@ object YelenaWebSocket {
             }
         } catch (e: Exception) { Log.e(TAG, "processes: ${e.message}") }
     }
-
     private fun handleApps(payload: String) {
         try {
             val arr = org.json.JSONArray(payload)
@@ -435,7 +403,6 @@ object YelenaWebSocket {
             }
         } catch (e: Exception) { Log.e(TAG, "apps: ${e.message}") }
     }
-
     private fun handleClipboardHistory(payload: String) {
         try {
             val arr = org.json.JSONObject(payload).getJSONArray("items")
