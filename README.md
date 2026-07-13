@@ -1,4 +1,4 @@
-# <img src=logo.svg height="29" valign="middle"> Y-Connect
+# <img src=logo.svg height="31" valign="middle"> Y-Connect
 
 <p align="center">
   <img src="previews/phone3.jpg" width="30%">
