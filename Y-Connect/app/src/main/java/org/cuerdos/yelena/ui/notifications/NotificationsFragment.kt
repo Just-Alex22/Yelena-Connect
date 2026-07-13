@@ -1,5 +1,4 @@
 package org.cuerdos.yelena.ui.notifications
-
 import android.os.Bundle
 import android.view.*
 import android.widget.TextView
@@ -13,25 +12,20 @@ import org.cuerdos.yelena.R
 import org.cuerdos.yelena.databinding.FragmentNotificationsBinding
 import org.cuerdos.yelena.model.PcNotification
 import org.cuerdos.yelena.websocket.YelenaWebSocket
-
 class NotificationsFragment : Fragment() {
     private var _b: FragmentNotificationsBinding? = null
     private val b get() = _b!!
-
     override fun onCreateView(i: LayoutInflater, c: ViewGroup?, s: Bundle?): View {
         _b = FragmentNotificationsBinding.inflate(i, c, false); return b.root
     }
-
     override fun onViewCreated(v: View, s: Bundle?) {
         super.onViewCreated(v, s)
         b.root.alpha = 0f; b.root.animate().alpha(1f).setDuration(300).start()
         b.btnBack.setOnClickListener { findNavController().popBackStack() }
-
         viewLifecycleOwner.lifecycleScope.launch {
-            YelenaWebSocket.pcNotifications.collectLatest { updateList(it) }
+            YelenaWebSocket.phoneNotifications.collectLatest { updateList(it) }
         }
     }
-
     private fun updateList(notifs: List<PcNotification>) {
         b.notifContainer.removeAllViews()
         b.tvEmpty.visibility = if (notifs.isEmpty()) View.VISIBLE else View.GONE
@@ -45,6 +39,5 @@ class NotificationsFragment : Fragment() {
             b.notifContainer.addView(item)
         }
     }
-
     override fun onDestroyView() { super.onDestroyView(); _b = null }
 }
