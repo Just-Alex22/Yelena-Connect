@@ -352,8 +352,6 @@ def _on_rssi(rssi):
         net_monitor.update_rssi(rssi)
         bridge.send({"t":"rssi","d":rssi})
     _update_tray()
-def _on_resources(d):
-    bridge.send({"t":"res","d":d})
 def _on_media(d):
     bridge.send({"t":"phone_media","d":d})
     context.set_media_state(d.get("playing", False))
@@ -495,7 +493,6 @@ def main():
     manager.on_pair_request(_on_pair)
     manager.on_battery_update(_on_battery)
     manager.on_rssi_changed(_on_rssi)
-    manager.on_resources_changed(_on_resources)
     manager.on_phone_media_changed(_on_media)
     manager.on_accent_color_changed(_on_accent_color)
     manager.on_phone_notifs_changed(_on_phone_notifs)

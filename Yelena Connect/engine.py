@@ -1111,7 +1111,6 @@ class YelenaWebSocketServer:
                     data["diskTotalGb"]   = _last_disk[1]
                     data["diskPercent"]   = _last_disk[2]
                 await self._broadcast_to("resources", data, paired)
-                self._mgr.on_resources_update(data)
             _tick += 1
             await asyncio.sleep(2)
     async def _media_loop(self):
@@ -1734,7 +1733,6 @@ class ConnectionManager:
         self.phone = PhoneController()
         self._on_battery_cbs: list[Callable] = []
         self._on_rssi_cbs: list[Callable] = []
-        self._on_resources_cbs: list[Callable] = []
         self._on_phone_media_cbs: list[Callable] = []
         self._on_phone_volume_cbs: list[Callable] = []
         self._on_accent_color_cbs: list[Callable] = []
@@ -1818,14 +1816,6 @@ class ConnectionManager:
                 pass
     def on_rssi_changed(self, cb: Callable):
         self._on_rssi_cbs.append(cb)
-    def on_resources_update(self, data: dict):
-        for cb in self._on_resources_cbs:
-            try:
-                cb(data)
-            except Exception:
-                pass
-    def on_resources_changed(self, cb: Callable):
-        self._on_resources_cbs.append(cb)
     def on_phone_media_update(self, data: dict):
         for cb in self._on_phone_media_cbs:
             try:
